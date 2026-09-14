@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beheer Aanbod — Prestige Automotive</title>
+  <link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <a href="index.html"><img src="assets/img/LOGO+AUTOMOTIVE+TRANSPARANT+BG.png" alt="Prestige Automotive"></a>
+    <div style="display:flex;align-items:center;gap:20px">
+      <a href="te-koop.html">Bekijk de site &rarr;</a>
+      <button type="button" id="logoutBtn" class="btn btn--ghost" style="display:none;padding:10px 20px;font-size:12px">Uitloggen</button>
+    </div>
+  </div>
+
+  <!-- ── LOGIN ── -->
+  <div id="loginView">
+    <div class="glass admin-login">
+      <h1>Beheer Aanbod</h1>
+      <p class="admin-login__sub">Log in om auto's toe te voegen, te bewerken of te verwijderen.</p>
+      <form id="loginForm" class="admin-form" novalidate>
+        <div class="form-group">
+          <label for="loginEmail">E-mailadres</label>
+          <input type="email" id="loginEmail" name="loginEmail" placeholder="jij@prestige-automotive.be" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Wachtwoord</label>
+          <input type="password" id="loginPassword" name="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn--primary">Inloggen</button>
+        <div id="loginError" class="admin-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── ADMIN PANEL ── -->
+  <div id="adminView" class="admin-wrap" style="display:none">
+
+    <div class="glass admin-panel">
+      <h2 id="carFormTitle">Nieuwe Auto Toevoegen</h2>
+      <form id="carForm" class="admin-form" novalidate>
+        <input type="hidden" id="fId" value="">
+        <div class="form-group">
+          <label for="fTitel">Titel <span class="form-req">*</span></label>
+          <input type="text" id="fTitel" placeholder="bv. BMW 320d Touring 2019" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fPrijsExcl">Prijs excl. BTW (€)</label>
+            <input type="number" id="fPrijsExcl" min="0" step="1" placeholder="20579">
+          </div>
+          <div class="form-group">
+            <label for="fPrijsIncl">Prijs incl. BTW (€)</label>
+            <input type="number" id="fPrijsIncl" min="0" step="1" placeholder="24900">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fBouwjaar">Bouwjaar</label>
+            <input type="text" id="fBouwjaar" placeholder="2019">
+          </div>
+          <div class="form-group">
+            <label for="fKm">Kilometerstand</label>
+            <input type="number" id="fKm" min="0" step="1" placeholder="84000">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fBrandstof">Brandstof</label>
+            <select id="fBrandstof">
+              <option>Benzine</option>
+              <option>Diesel</option>
+              <option>Hybride</option>
+              <option>Elektrisch</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fTransmissie">Transmissie</label>
+            <select id="fTransmissie">
+              <option>Manueel</option>
+              <option>Automaat</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="fStatus">Status</label>
+          <select id="fStatus">
+            <option value="beschikbaar">Beschikbaar</option>
+            <option value="verkocht">Verkocht</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fFotos">Foto's (URL's, gescheiden door een komma)</label>
+          <textarea id="fFotos" rows="3" placeholder="https://.../foto1.jpg, https://.../foto2.jpg"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fBeschrijving">Beschrijving</label>
+          <textarea id="fBeschrijving" rows="5" placeholder="Onderhoudshistoriek, opties, staat van de wagen…"></textarea>
+        </div>
+        <div class="admin-form__actions">
+          <button type="submit" id="carFormSubmit" class="btn btn--primary">Auto Toevoegen</button>
+          <button type="button" id="carFormCancel" style="display:none">Annuleren</button>
+        </div>
+        <div id="carFormError" class="admin-error"></div>
+      </form>
+    </div>
+
+    <div class="glass admin-panel">
+      <h2>Huidig Aanbod</h2>
+      <div id="carsList" class="admin-list"></div>
+      <p id="carsListEmpty" class="admin-empty" style="display:none"></p>
+    </div>
+
+  </div>
+</div>
+
+<script type="module" src="assets/js/te-koop-beheer.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+﻿<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galerij — Prestige Automotive</title>
+  <link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="Bekijk onze voor- en na-resultaten. Exterieur detailing, paint correction, interieur reiniging en keramische coating door Prestige Automotive.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ── Gallery filters ── */
+    .gal-filters {
+      display:flex; flex-wrap:wrap; gap:10px;
+      justify-content:center; margin-bottom:48px;
+    }
+    .gal-filter {
+      padding:10px 24px; border-radius:var(--r-pill);
+      border:1px solid var(--border); color:var(--muted);
+      font-family:var(--display); font-size:13px; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase;
+      cursor:pointer; transition:all var(--t-sm) var(--ease-out);
+      background:transparent;
+    }
+    .gal-filter.active,
+    .gal-filter:hover {
+      border-color:var(--green); color:var(--green);
+      background:var(--green-dim);
+    }
+
+    /* ── Before/After strip ── */
+    .ba-section { padding:120px 0; background:var(--surface-lo); }
+    .ba-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:3px;
+      border-radius:var(--r-lg); overflow:hidden; max-width:900px; margin:0 auto;
+    }
+    .ba-pane { position:relative; overflow:hidden; }
+    .ba-pane img { width:100%; height:400px; object-fit:cover;
+      filter:brightness(.75); transition:filter .5s; }
+    .ba-pane:hover img { filter:brightness(.95); }
+    .ba-label {
+      position:absolute; top:20px; left:20px;
+      font-family:var(--display); font-size:11px; font-weight:700;
+      letter-spacing:.15em; text-transform:uppercase;
+      padding:6px 14px; border-radius:var(--r-pill);
+      border:1px solid;
+    }
+    .ba-label--before { background:rgba(0,0,0,.6); border-color:var(--border); color:var(--muted); }
+    .ba-label--after  { background:rgba(65,187,31,.18); border-color:var(--green); color:var(--green); }
+    .ba-caption {
+      position:absolute; bottom:20px; left:0; right:0;
+      text-align:center; font-family:var(--display);
+      font-size:12px; font-weight:600; letter-spacing:.1em;
+      text-transform:uppercase; color:var(--muted); padding:0 20px;
+    }
+
+    /* ── Gallery counter ── */
+    .gal-counter {
+      text-align:center; margin-bottom:60px;
+    }
+    .gal-counter__num {
+      font-family:var(--display); font-size:80px; font-weight:800;
+      color:var(--green); line-height:1;
+    }
+    .gal-counter__label {
+      font-size:14px; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--muted); margin-top:8px;
+    }
+
+    /* ── Instagram feed ── */
+    .ig-head {
+      display:flex; align-items:center; justify-content:space-between;
+      gap:24px; flex-wrap:wrap; margin-bottom:28px;
+    }
+    .ig-handle {
+      display:inline-flex; align-items:center; gap:10px;
+      font-family:var(--display); font-size:14px; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; color:var(--green);
+    }
+    .ig-handle svg { width:20px; height:20px; stroke:var(--green); fill:none; stroke-width:1.8; }
+    .ig-grid {
+      display:grid; grid-template-columns:repeat(5,1fr); gap:10px;
+    }
+    .ig-item {
+      position:relative; display:block; aspect-ratio:1/1;
+      overflow:hidden; border-radius:var(--r-sm); background:var(--surface-hi);
+    }
+    .ig-item img {
+      width:100%; height:100%; object-fit:cover;
+      transition:transform var(--t-md) var(--ease-out);
+    }
+    .ig-item:hover img { transform:scale(1.06); }
+    .ig-item__overlay {
+      position:absolute; inset:0; display:flex;
+      align-items:center; justify-content:center;
+      background:rgba(65,187,31,.82); opacity:0;
+      transition:opacity var(--t-sm);
+    }
+    .ig-item:hover .ig-item__overlay { opacity:1; }
+    @media (max-width:900px) { .ig-grid { grid-template-columns:repeat(3,1fr); } }
+    @media (max-width:520px) { .ig-grid { grid-template-columns:repeat(2,1fr); } }
+
+    /* ── CTA gallery callout ── */
+    .gal-cta-row {
+      display:flex; align-items:center; justify-content:space-between;
+      gap:40px; margin-top:64px; padding:48px 60px;
+      background:var(--surface-hi); border-radius:var(--r-lg);
+      border:1px solid var(--border);
+    }
+    .gal-cta-row h3 {
+      font-size:clamp(22px,3vw,34px); font-weight:800; letter-spacing:.04em;
+    }
+    .gal-cta-row h3 em { color:var(--green); font-style:normal; }
+    @media (max-width:768px) {
+      .gal-cta-row { flex-direction:column; text-align:center; padding:36px 28px; }
+      .ba-grid { grid-template-columns:1fr; }
+      .ba-pane img { height:260px; }
+    }
+  </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav__logo"><img src="assets/img/LOGO+AUTOMOTIVE+TRANSPARANT+BG.png" alt="Prestige Automotive" class="logo--light"><img src="assets/img/logo-dark.png" alt="" aria-hidden="true" class="logo--dark"></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="prijzen.html">Prijzen</a></li>
+    <li><a href="galerij.html">Galerij</a></li>
+    <li><a href="te-koop.html">Te Koop</a></li>
+    <li><a href="over-ons.html">Over Ons</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__right">
+    <a href="contact.html" class="nav__cta">Offerte Aanvragen</a>
+    <button class="nav__burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav__mobile">
+  <a href="index.html">Home</a>
+  <a href="services.html">Services</a>
+  <a href="prijzen.html">Prijzen</a>
+  <a href="galerij.html">Galerij</a>
+  <a href="te-koop.html">Te Koop</a>
+  <a href="over-ons.html">Over Ons</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav__mobile-cta">Offerte Aanvragen</a>
+</div>
+
+<div class="page-wrap">
+
+<!-- ── PAGE HERO ── -->
+<section class="page-hero">
+  <div class="page-hero__bg" style="background-image:url('assets/img/prestige-rs3-front-plate.jpg')"></div>
+  <div class="page-hero__ghost" aria-hidden="true">GALERIJ</div>
+  <div class="container page-hero__inner">
+    <p class="page-hero__crumb"><a href="index.html">Home</a> / Galerij</p>
+    <h1 class="page-hero__title">Resultaten die<br><em>voor zichzelf spreken</em></h1>
+    <p class="page-hero__sub">Elke foto vertelt het verhaal van toewijding, vakmanschap en de passie die wij in elk voertuig steken.</p>
+  </div>
+</section>
+
+<!-- ── GALLERY GRID ── -->
+<section class="section">
+  <div class="container">
+
+    <div class="section-header rev">
+      <p class="eyebrow">Ons werk</p>
+      <h2 class="section-title">De <em>Prestige</em> Behandeling</h2>
+      <p class="section-sub">Van compacte stadsauto tot exclusieve sportwagen — elk voertuig krijgt de maximale aandacht en zorg die het verdient.</p>
+    </div>
+
+
+    <!-- Filters -->
+    <div class="gal-filters rev">
+      <button class="gal-filter active" data-filter="all">Alles</button>
+      <button class="gal-filter" data-filter="exterieur">Exterieur</button>
+      <button class="gal-filter" data-filter="interieur">Interieur</button>
+      <button class="gal-filter" data-filter="coating">Coating</button>
+      <button class="gal-filter" data-filter="correction">Paint Correction</button>
+    </div>
+
+    <!-- Instagram feed (gevuld door instagram-feed.js) -->
+    <div class="ig-head rev">
+      <a class="ig-handle" href="https://www.instagram.com/_prestige_automotive" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        @_prestige_automotive
+      </a>
+      <a href="https://www.instagram.com/_prestige_automotive" target="_blank" rel="noopener" class="btn btn--green-ghost">Volg ons op Instagram</a>
+    </div>
+    <div class="ig-grid" id="ig-grid" hidden></div>
+
+    <!-- Vaste galerij — valt terug hierop zolang de feed niet actief is -->
+    <div class="gallery-masonry" id="gallery-fallback">
+      <div class="gal-item rev" data-category="exterieur" data-src="assets/img/image-asset.jpeg">
+        <img src="assets/img/image-asset.jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="exterieur" data-src="assets/img/image-asset(1).jpeg">
+        <img src="assets/img/image-asset(1).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="interieur" data-src="assets/img/image-asset(2).jpeg">
+        <img src="assets/img/image-asset(2).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="interieur" data-src="assets/img/image-asset(3).jpeg">
+        <img src="assets/img/image-asset(3).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="coating" data-src="assets/img/image-asset(4).jpeg">
+        <img src="assets/img/image-asset(4).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="coating" data-src="assets/img/image-asset(5).jpeg">
+        <img src="assets/img/image-asset(5).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="correction" data-src="assets/img/image-asset(6).jpeg">
+        <img src="assets/img/image-asset(6).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="exterieur" data-src="assets/img/image-asset(8).jpeg">
+        <img src="assets/img/image-asset(8).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="exterieur" data-src="assets/img/image-asset(9).jpeg">
+        <img src="assets/img/image-asset(9).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="interieur" data-src="assets/img/image-asset(10).jpeg">
+        <img src="assets/img/image-asset(10).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="coating" data-src="assets/img/image-asset(12).jpeg">
+        <img src="assets/img/image-asset(12).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="correction" data-src="assets/img/image-asset(13).jpeg">
+        <img src="assets/img/image-asset(13).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="correction" data-src="assets/img/image-asset(14).jpeg">
+        <img src="assets/img/image-asset(14).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+      <div class="gal-item rev" data-category="exterieur" data-src="assets/img/image-asset(15).jpeg">
+        <img src="assets/img/image-asset(15).jpeg" alt="Realisatie Prestige Automotive">
+        <div class="gal-item__overlay"><span><svg width="20" height="20" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span></div>
+      </div>
+    </div>
+
+    <!-- Bottom CTA row -->
+    <div class="gal-cta-row rev">
+      <div>
+        <h3>Uw auto als <em>volgende</em>?</h3>
+        <p style="color:var(--muted);margin-top:12px;font-size:15px;">Vraag vandaag nog een vrijblijvende offerte aan en breng uw wagen bij ons in Heist-op-den-Berg.</p>
+      </div>
+      <div style="display:flex;gap:16px;flex-shrink:0;flex-wrap:wrap;">
+        <a href="contact.html" class="btn btn--primary">Offerte Aanvragen</a>
+        <a href="prijzen.html" class="btn btn--ghost">Bekijk Prijzen</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── BEFORE / AFTER ── -->
+
+
+<!-- ── CTA BANNER ── -->
+<section class="cta-banner">
+  <div class="cta-banner__ghost" aria-hidden="true">DETAIL</div>
+  <div class="container cta-banner__inner">
+    <div>
+      <p class="eyebrow" style="color:rgba(0,0,0,.55);">Klaar voor een transformatie?</p>
+      <h2 class="cta-banner__title">Uw auto verdient<br><em>het allerbeste</em></h2>
+    </div>
+    <div class="cta-banner__actions">
+      <a href="contact.html" class="btn btn--primary">Vrijblijvende Offerte</a>
+      <a href="services.html" class="btn btn--outline-white">Onze Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/img/logo-dark.png" alt="Prestige Automotive" class="footer__logo">
+        <p class="footer__tagline">Premium autodetailing op onze locatie.<br>Heist-op-den-Berg.</p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/_prestige_automotive" target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="https://www.facebook.com/people/Prestige-automotive/61555001006678/" target="_blank" rel="noopener" aria-label="Facebook"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer__h">Services</p>
+        <ul class="footer__ul">
+          <li><a href="services.html#exterieur">Exterieur Detailing</a></li>
+          <li><a href="services.html#interieur">Interieur Reiniging</a></li>
+          <li><a href="services.html#paint-correction">Paint Correction</a></li>
+          <li><a href="services.html#coating">Keramische Coating</a></li>
+          <li><a href="services.html#combi">Combi Deal</a></li>
+          <li><a href="services.html#full-detail">Full Prestige Detail</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__h">Navigatie</p>
+        <ul class="footer__ul">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="prijzen.html">Prijzen</a></li>
+          <li><a href="galerij.html">Galerij</a></li>
+          <li><a href="te-koop.html">Te Koop</a></li>
+          <li><a href="over-ons.html">Over Ons</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__h">Contact</p>
+        <ul class="footer__ul">
+          <li><a href="tel:+32498855865">+32 498 85 58 65</a></li>
+          <li><a href="mailto:Geoffrey@prestige-automotive.be">Geoffrey@prestige-automotive.be</a></li>
+          <li>Industriepark B18 bus 2</li>
+          <li>2220 Heist-op-den-Berg</li>
+          <li>Ma–Za: 8:00–19:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Prestige Automotive. Alle rechten voorbehouden.</p>
+      <p class="footer__badge">Premium Autodetailing · Belgi&euml;</p>
+    </div>
+  </div>
+</footer>
+
+</div><!-- .page-wrap -->
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" role="dialog" aria-modal="true" aria-label="Afbeelding vergroten">
+  <button class="lightbox__close" aria-label="Sluiten">&times;</button>
+  <img src="" alt="Galerij foto vergroot">
+</div>
+
+<!-- ── FAB WhatsApp ── -->
+<a href="https://wa.me/32498855865" class="fab-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<!-- ── BACK TO TOP ── -->
+<button id="back-top" aria-label="Terug naar boven">
+  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/instagram-feed.js"></script>
+<script>
+  // Gallery filter
+  document.querySelectorAll('.gal-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.gal-filter').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var filter = btn.dataset.filter;
+      document.querySelectorAll('.gal-item').forEach(function(item) {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.style.opacity = '1';
+          item.style.transform = 'scale(1)';
+          item.style.pointerEvents = 'auto';
+        } else {
+          item.style.opacity = '0.15';
+          item.style.transform = 'scale(0.97)';
+          item.style.pointerEvents = 'none';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

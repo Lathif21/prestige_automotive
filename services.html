@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Prestige Automotive</title>
+  <link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="Ontdek onze volledige diensten: exterieur detailing, interieur reiniging, paint correction, keramische coating en full detail pakketten.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ── SERVICE PAGE SPECIFIC ── */
+
+    /* Page hero */
+    .svc-page-hero {
+      position: relative;
+      height: 70vh;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+    .svc-page-hero__bg {
+      position: absolute;
+      inset: 0;
+      background: url('assets/img/prestige-rs3-wheel-caliper.jpg') center 40% / cover no-repeat;
+    }
+    .svc-page-hero__bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,.55) 0%, rgba(0,0,0,.30) 60%, rgba(0,0,0,.70) 100%);
+    }
+    .svc-page-hero__content {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+    }
+    .svc-page-hero__eyebrow {
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: .75rem;
+      font-weight: 600;
+    }
+    .svc-page-hero__title {
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: 1.25rem;
+    }
+    .svc-page-hero__sub {
+      font-size: 1.1rem;
+      opacity: .8;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* Sticky service nav */
+    .svc-nav {
+      position: sticky;
+      top: var(--nav-h, 64px);
+      z-index: 200;
+      background: rgba(249,249,247,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,.10);
+    }
+    .svc-nav__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .svc-nav__inner::-webkit-scrollbar { display: none; }
+    .svc-nav__link {
+      flex-shrink: 0;
+      padding: 1rem 1.25rem;
+      font-size: .8rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(0,0,0,.55);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color .25s, border-color .25s;
+      white-space: nowrap;
+    }
+    .svc-nav__link:hover,
+    .svc-nav__link.active {
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    /* Each service section has a fixed background image */
+    .svc-section {
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center 35%;
+    }
+
+    /* Individual service hero — overlay only, no separate bg div needed */
+    .svc-hero {
+      position: relative;
+      height: 72vh;
+      min-height: 420px;
+      display: flex;
+      align-items: flex-end;
+    }
+    .svc-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,.10) 100%);
+    }
+    .svc-hero__number {
+      position: absolute;
+      right: 6%;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: clamp(7rem, 18vw, 16rem);
+      font-weight: 900;
+      color: rgba(255,255,255,.05);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -.04em;
+    }
+    .svc-hero__content {
+      position: relative;
+      z-index: 2;
+      padding: 3rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .svc-hero__tag {
+      display: inline-block;
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: .35rem .9rem;
+      border-radius: 2rem;
+      margin-bottom: 1rem;
+    }
+    .svc-hero__name {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: .75rem;
+    }
+    .svc-hero__price-badge {
+      display: inline-block;
+      background: var(--green);
+      color: #000;
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: .5rem 1.4rem;
+      border-radius: 2rem;
+    }
+
+    /* Service body: semi-transparent zo de vaste achtergrond doorschemert */
+    .svc-body {
+      background: rgba(249,249,247,.93);
+      backdrop-filter: blur(4px);
+      padding: 5rem 2rem;
+    }
+    .svc-body__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 4rem;
+      align-items: start;
+    }
+    .svc-body__left h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 1.1rem;
+    }
+    .svc-body__left p {
+      font-size: 1.05rem;
+      color: rgba(0,0,0,.68);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .svc-includes {
+      margin-top: 2rem;
+    }
+    .svc-includes__title {
+      font-size: .75rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .svc-includes__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .65rem 2rem;
+    }
+    .svc-includes__list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .6rem;
+      font-size: .95rem;
+      color: rgba(0,0,0,.75);
+      line-height: 1.45;
+    }
+    .svc-includes__list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      margin-top: .05rem;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 9'%3E%3Cpath fill='%23000' d='M1 4l3.5 3.5L11 1'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 10px;
+    }
+
+    /* Price card (sidebar) */
+    .svc-price-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      padding: 2.5rem;
+      position: sticky;
+      top: calc(var(--nav-h, 64px) + 60px);
+    }
+    .svc-price-card__label {
+      font-size: .7rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,.50);
+      margin-bottom: .5rem;
+    }
+    .svc-price-card__price {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: .3rem;
+    }
+    .svc-price-card__from {
+      font-size: .85rem;
+      color: rgba(0,0,0,.50);
+      margin-bottom: 2rem;
+    }
+    .svc-price-card__cta {
+      display: block;
+      text-align: center;
+      background: var(--green);
+      color: #000;
+      font-weight: 800;
+      font-size: .95rem;
+      padding: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      transition: opacity .2s;
+      margin-bottom: 1.5rem;
+    }
+    .svc-price-card__cta:hover { opacity: .85; }
+    .svc-price-card__info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(0,0,0,.08);
+    }
+    .svc-price-card__info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+    }
+    .svc-price-card__info-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(var(--green-rgb, 74,222,128),.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .svc-price-card__info-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--green);
+    }
+    .svc-price-card__info-text strong {
+      display: block;
+      font-size: .85rem;
+      color: rgba(0,0,0,.80);
+      margin-bottom: .15rem;
+    }
+    .svc-price-card__info-text span {
+      font-size: .78rem;
+      color: rgba(0,0,0,.50);
+    }
+
+    /* Full-width divider image — vaste achtergrond die blijft tijdens scrollen */
+    .svc-divider {
+      height: 380px;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: relative;
+    }
+    .svc-divider::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+    }
+    .svc-divider__quote {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .svc-divider__quote blockquote {
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: #fff;
+      max-width: 800px;
+      line-height: 1.35;
+    }
+    .svc-divider__quote blockquote em {
+      color: var(--green);
+      font-style: normal;
+    }
+
+    /* Overview grid */
+    .svc-overview {
+      padding: 6rem 2rem;
+      background: var(--surface-lo);
+    }
+    .svc-overview__head {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .svc-overview__eyebrow {
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: .75rem;
+    }
+    .svc-overview__title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--white);
+    }
+    .svc-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .svc-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: border-color .3s, transform .3s;
+      text-decoration: none;
+      display: block;
+    }
+    .svc-card:hover {
+      border-color: var(--green);
+      transform: translateY(-4px);
+    }
+    .svc-card__number {
+      font-size: .75rem;
+      letter-spacing: .15em;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .svc-card__title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: .75rem;
+    }
+    .svc-card__desc {
+      font-size: .9rem;
+      color: rgba(0,0,0,.60);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+    .svc-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .svc-card__price {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+    .svc-card__arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(0,0,0,.50);
+      transition: background .25s, color .25s, border-color .25s;
+    }
+    .svc-card:hover .svc-card__arrow {
+      background: var(--green);
+      color: #000;
+      border-color: var(--green);
+    }
+
+    /* FAQ */
+    .svc-faq {
+      padding: 6rem 2rem;
+      background: var(--surface-lo);
+    }
+    .svc-faq__inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .svc-faq__head {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .svc-faq__eyebrow {
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: .75rem;
+    }
+    .svc-faq__title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: var(--white);
+    }
+    .faq-item {
+      border-bottom: 1px solid rgba(0,0,0,.10);
+    }
+    .faq-item__q {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .faq-item__icon {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,.20);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .25s, border-color .25s;
+    }
+    .faq-item__icon::before,
+    .faq-item__icon::after {
+      content: '';
+      position: absolute;
+      background: #fff;
+      border-radius: 2px;
+    }
+    .faq-item__icon { position: relative; }
+    .faq-item__icon::before {
+      width: 12px; height: 2px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .faq-item__icon::after {
+      width: 2px; height: 12px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity .25s, transform .25s;
+    }
+    .faq-item.open .faq-item__icon {
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .faq-item.open .faq-item__icon::before,
+    .faq-item.open .faq-item__icon::after { background: #000; }
+    .faq-item.open .faq-item__icon::after {
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .faq-item__a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease, padding .3s;
+      font-size: .97rem;
+      color: rgba(0,0,0,.65);
+      line-height: 1.75;
+    }
+    .faq-item.open .faq-item__a {
+      max-height: 400px;
+      padding-bottom: 1.5rem;
+    }
+
+    /* CTA strip */
+    .svc-cta {
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(56,168,26,.06) 50%, var(--surface) 100%);
+      text-align: center;
+    }
+    .svc-cta__title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .svc-cta__title em {
+      color: var(--green);
+      font-style: normal;
+    }
+    .svc-cta__sub {
+      font-size: 1.05rem;
+      color: rgba(0,0,0,.55);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .svc-cta__btn {
+      display: inline-block;
+      background: var(--green);
+      color: #000;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 1.1rem 2.8rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: opacity .2s, transform .2s;
+    }
+    .svc-cta__btn:hover { opacity: .88; transform: translateY(-2px); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .svc-body__inner {
+        grid-template-columns: 1fr;
+      }
+      .svc-price-card {
+        position: static;
+      }
+      .svc-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .svc-includes__list {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .svc-grid {
+        grid-template-columns: 1fr;
+      }
+      .svc-divider {
+        background-attachment: scroll;
+      }
+    }
+  </style>
+</head>
+<body data-anchor-offset="130">
+<div id="progress-bar"></div>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav__logo"><img src="assets/img/LOGO+AUTOMOTIVE+TRANSPARANT+BG.png" alt="Prestige Automotive" class="logo--light"><img src="assets/img/logo-dark.png" alt="" aria-hidden="true" class="logo--dark"></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="prijzen.html">Prijzen</a></li>
+    <li><a href="galerij.html">Galerij</a></li>
+    <li><a href="te-koop.html">Te Koop</a></li>
+    <li><a href="over-ons.html">Over Ons</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__right">
+    <a href="contact.html" class="nav__cta">Offerte Aanvragen</a>
+    <button class="nav__burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav__mobile">
+  <a href="index.html">Home</a>
+  <a href="services.html">Services</a>
+  <a href="prijzen.html">Prijzen</a>
+  <a href="galerij.html">Galerij</a>
+  <a href="te-koop.html">Te Koop</a>
+  <a href="over-ons.html">Over Ons</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav__mobile-cta">Offerte Aanvragen</a>
+</div>
+
+<!-- ── PAGE HERO ── -->
+<div class="page-wrap">
+
+<section class="svc-page-hero">
+  <div class="svc-page-hero__bg"></div>
+  <div class="svc-page-hero__content rev">
+    <p class="svc-page-hero__eyebrow">Professionele Autodetailing</p>
+    <h1 class="svc-page-hero__title">Onze Services</h1>
+    <p class="svc-page-hero__sub">Wij leveren kwalitatieve services voor elk voertuig — met resultaten die spreken.</p>
+  </div>
+</section>
+
+<!-- ── STICKY SERVICE NAV ── -->
+<nav class="svc-nav" aria-label="Service navigatie">
+  <div class="svc-nav__inner">
+    <a class="svc-nav__link" href="#exterieur">Exterieur</a>
+    <a class="svc-nav__link" href="#interieur">Interieur</a>
+    <a class="svc-nav__link" href="#paint-correction">Paint Correction</a>
+    <a class="svc-nav__link" href="#coating">Keramische Coating</a>
+    <a class="svc-nav__link" href="#combi">Combi Deal</a>
+    <a class="svc-nav__link" href="#full-detail">Full Prestige Detail</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════
+     01 — EXTERIEUR DETAILING
+════════════════════════════════ -->
+<section id="exterieur" class="svc-section" style="background-image:url('assets/img/prestige-rs3-wheel-fender.jpg')">
+  <!-- Hero -->
+  <div class="svc-hero">
+    <span class="svc-hero__number" aria-hidden="true">01</span>
+    <div class="svc-hero__content">
+      <span class="svc-hero__tag">Exterieur</span>
+      <h2 class="svc-hero__name">Exterieur Detailing</h2>
+      <span class="svc-hero__price-badge">Vanaf €65</span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="svc-body">
+    <div class="svc-body__inner">
+      <div class="svc-body__left rev">
+        <h3>Een makeloos glanzend exterieur</h3>
+        <p>
+          Onze exterieur detailing service gaat verder dan een gewone wasbeurt. We reinigen uw voertuig grondig van boven tot onder, verwijderen hardnekkig vuil, vliegverontreinigingen en waterplekken. Het resultaat: een diepglanzende lak die eruitziet als vers uit de showroom.
+        </p>
+        <p>
+          Elk voertuig wordt behandeld met professionele producten en technieken, volledig op maat van de lakconditie en het type voertuig. We werken op onze vaste locatie in Heist-op-den-Berg — breng uw wagen bij ons voor een optimale behandeling.
+        </p>
+        <div class="svc-includes">
+          <p class="svc-includes__title">Wat is inbegrepen</p>
+          <ul class="svc-includes__list">
+            <li>Handwas met twee-emmer methode</li>
+            <li>Velgen & banden reiniging</li>
+            <li>Deurrubbers & dorpels</li>
+            <li>Ramen & spiegels</li>
+            <li>Droogleggen met microvezel</li>
+            <li>Tyre dressing (bandenglans)</li>
+            <li>Snelle lak­beschermer (spray wax)</li>
+            <li>Interieur ramen binnenste</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        <div class="svc-price-card rev">
+          <p class="svc-price-card__label">Startprijs</p>
+          <p class="svc-price-card__price">€65</p>
+          <p class="svc-price-card__from">Prijs afhankelijk van grootte & conditie voertuig</p>
+          <a href="contact.html" class="svc-price-card__cta">Boek Nu</a>
+          <div class="svc-price-card__info">
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>1,5 – 2,5 uur</strong>
+                <span>Geschatte behandeltijd</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Vaste locatie</strong>
+                <span>Heist-op-den-Berg</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Professionele producten</strong>
+                <span>A-merk reinigingsmiddelen</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- Divider 1 -->
+<div class="svc-divider" style="background-image:url('assets/img/prestige-rs3-paddle-shift.jpg')">
+  <div class="svc-divider__quote">
+    <blockquote>"Uw auto verdient de beste behandeling — <em>elke keer weer.</em>"</blockquote>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     02 — INTERIEUR REINIGING
+════════════════════════════════ -->
+<section id="interieur" class="svc-section" style="background-image:url('assets/img/prestige-rs3-seat-console.jpg'); background-position: center 20%;">
+  <div class="svc-hero">
+    <span class="svc-hero__number" aria-hidden="true">02</span>
+    <div class="svc-hero__content">
+      <span class="svc-hero__tag">Interieur</span>
+      <h2 class="svc-hero__name">Interieur Reiniging</h2>
+      <span class="svc-hero__price-badge">Vanaf €85</span>
+    </div>
+  </div>
+
+  <div class="svc-body">
+    <div class="svc-body__inner">
+      <div class="svc-body__left rev">
+        <h3>Een fris & hygiënisch interieur</h3>
+        <p>
+          Een schoon interieur is méér dan esthetiek — het gaat over hygiëne, comfort en rijplezier. Met onze diepgaande interieur reiniging pakken we elke plooi, elk vak en elk oppervlak aan. Van de stoelen tot de dashboardspleten.
+        </p>
+        <p>
+          We gebruiken professionele stoomreinigings­apparatuur en extractie­machines om hardnekkige vlekken, geuren en bacteriën te verwijderen — zonder de bekleding te beschadigen.
+        </p>
+        <div class="svc-includes">
+          <p class="svc-includes__title">Wat is inbegrepen</p>
+          <ul class="svc-includes__list">
+            <li>Grondig stofzuigen (ook zetels)</li>
+            <li>Stoomreiniging dashboard</li>
+            <li>Kunststof & vinyl conditionering</li>
+            <li>Leder reiniging & conditioner</li>
+            <li>Tapijt & matten reiniging</li>
+            <li>Deur­panelen & hendels</li>
+            <li>Ramen volledig (binnen)</li>
+            <li>Geurneutralisatie</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        <div class="svc-price-card rev">
+          <p class="svc-price-card__label">Startprijs</p>
+          <p class="svc-price-card__price">€85</p>
+          <p class="svc-price-card__from">Prijs afhankelijk van grootte & conditie voertuig</p>
+          <a href="contact.html" class="svc-price-card__cta">Boek Nu</a>
+          <div class="svc-price-card__info">
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>2 – 4 uur</strong>
+                <span>Geschatte behandeltijd</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Vaste locatie</strong>
+                <span>Heist-op-den-Berg</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Stoom & extractie</strong>
+                <span>Professionele apparatuur</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     03 — PAINT CORRECTION
+════════════════════════════════ -->
+<section id="paint-correction" class="svc-section" style="background-image:url('assets/img/prestige-rs3-cockpit-dark.jpg')">
+  <div class="svc-hero">
+    <span class="svc-hero__number" aria-hidden="true">03</span>
+    <div class="svc-hero__content">
+      <span class="svc-hero__tag">Lak Herstel</span>
+      <h2 class="svc-hero__name">Paint Correction</h2>
+      <span class="svc-hero__price-badge">Vanaf €150</span>
+    </div>
+  </div>
+
+  <div class="svc-body">
+    <div class="svc-body__inner">
+      <div class="svc-body__left rev">
+        <h3>Swirls & krassen — verleden tijd</h3>
+        <p>
+          Paint correction is het professioneel verwijderen van lak­defecten zoals swirl marks, fijne krassen, oxidatie en waterplekken met behulp van een polijstmachine. Het resultaat is een diepe, glasachtige glans die de oorspronkelijke kleur van uw lak tot leven brengt.
+        </p>
+        <p>
+          We werken met single-stage of multi-stage correctie, afhankelijk van de laktoestand. Elk voertuig wordt na de paint correction afgewerkt met een beschermende laag.
+        </p>
+        <div class="svc-includes">
+          <p class="svc-includes__title">Wat is inbegrepen</p>
+          <ul class="svc-includes__list">
+            <li>Decontaminatie wassen</li>
+            <li>Clay bar behandeling</li>
+            <li>Laktestmeting (lakmikrometer)</li>
+            <li>Machine polijsten (1 of 2 stappen)</li>
+            <li>Swirl & krasverwijdering</li>
+            <li>Oxidatie verwijdering</li>
+            <li>Afwerking met sealant of wax</li>
+            <li>Eindcontrole in daglicht</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        <div class="svc-price-card rev">
+          <p class="svc-price-card__label">Startprijs</p>
+          <p class="svc-price-card__price">€150</p>
+          <p class="svc-price-card__from">Prijs afhankelijk van grootte & conditie lak</p>
+          <a href="contact.html" class="svc-price-card__cta">Boek Nu</a>
+          <div class="svc-price-card__info">
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>4 – 8 uur</strong>
+                <span>Geschatte behandeltijd</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Professioneel polijsten</strong>
+                <span>Machine & compound op maat</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Zichtbaar resultaat</strong>
+                <span>Tot 80% defectverwijdering</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- Divider 2 -->
+<div class="svc-divider" style="background-image:url('assets/img/prestige-rs3-headrest-logo.jpg')">
+  <div class="svc-divider__quote">
+    <blockquote>"Bescherming die jaren meegaat — <em>keramische kwaliteit.</em>"</blockquote>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     04 — KERAMISCHE COATING
+════════════════════════════════ -->
+<section id="coating" class="svc-section" style="background-image:url('assets/img/prestige-rs3-front-action.jpg'); background-position: center 60%;">
+  <div class="svc-hero">
+    <span class="svc-hero__number" aria-hidden="true">04</span>
+    <div class="svc-hero__content">
+      <span class="svc-hero__tag">Bescherming</span>
+      <h2 class="svc-hero__name">Keramische Coating</h2>
+      <span class="svc-hero__price-badge">Vanaf €350</span>
+    </div>
+  </div>
+
+  <div class="svc-body">
+    <div class="svc-body__inner">
+      <div class="svc-body__left rev">
+        <h3>Langdurige lakbescherming op moleculair niveau</h3>
+        <p>
+          Een keramische coating is de ultieme bescherming voor uw voertuig. Deze nano-coating hecht chemisch aan de lak en creëert een harde, hydrofobe laag die uw wagen beschermt tegen UV, vuil, zout en fijne krassen — tot meerdere jaren lang.
+        </p>
+        <p>
+          Vóór de coating wordt de lak altijd voorbereid met een grondige decontaminatie en minstens een één-staps paint correction. Wij werken uitsluitend met gecertificeerde, professionele coating­producten.
+        </p>
+        <div class="svc-includes">
+          <p class="svc-includes__title">Wat is inbegrepen</p>
+          <ul class="svc-includes__list">
+            <li>Volledige decontaminatie</li>
+            <li>Clay bar behandeling</li>
+            <li>1-staps paint correction</li>
+            <li>IPA lak­ontvetting</li>
+            <li>Keramische coating applicatie</li>
+            <li>Uitharding & curing</li>
+            <li>Hydrofobe watertest</li>
+            <li>2 jaar garantie (bij onderhoud)</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        <div class="svc-price-card rev">
+          <p class="svc-price-card__label">Startprijs</p>
+          <p class="svc-price-card__price">€350</p>
+          <p class="svc-price-card__from">Prijs afhankelijk van grootte & voorbereiding</p>
+          <a href="contact.html" class="svc-price-card__cta">Boek Nu</a>
+          <div class="svc-price-card__info">
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>1 – 2 dagen</strong>
+                <span>Inclusief curing tijd</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>2–5 jaar bescherming</strong>
+                <span>Afhankelijk van product & onderhoud</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Pro-grade producten</strong>
+                <span>Gecertificeerde nano-coating</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     05 — COMBI DEAL
+════════════════════════════════ -->
+<section id="combi" class="svc-section" style="background-image:url('assets/img/prestige-rs3-wheel-controls.jpg'); background-position: center 55%;">
+  <div class="svc-hero">
+    <span class="svc-hero__number" aria-hidden="true">05</span>
+    <div class="svc-hero__content">
+      <span class="svc-hero__tag">Populairste Keuze</span>
+      <h2 class="svc-hero__name">Combi Deal</h2>
+      <span class="svc-hero__price-badge">Vanaf €95</span>
+    </div>
+  </div>
+
+  <div class="svc-body">
+    <div class="svc-body__inner">
+      <div class="svc-body__left rev">
+        <h3>Binnen & buiten — volledig verzorgd</h3>
+        <p>
+          De Combi Deal combineert onze exterieur én interieur service in één behandeling. Dit is de meest gekozen optie voor klanten die hun auto van A tot Z willen laten verzorgen — van een glanzende lak tot een fris en schoon interieur.
+        </p>
+        <p>
+          Ideaal als periodiek onderhoud, voor verkoop, of gewoon wanneer uw wagen een grondige opfrisbeurt verdient. Goedkoper dan beide diensten afzonderlijk boeken.
+        </p>
+        <div class="svc-includes">
+          <p class="svc-includes__title">Wat is inbegrepen</p>
+          <ul class="svc-includes__list">
+            <li>Volledige exterieur detailing</li>
+            <li>Volledige interieur reiniging</li>
+            <li>Velgen & banden behandeling</li>
+            <li>Ramen (binnen & buiten)</li>
+            <li>Stoomreiniging dashboard</li>
+            <li>Tapijt & matten reiniging</li>
+            <li>Spray wax lakbeschermer</li>
+            <li>Geurneutralisatie</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        <div class="svc-price-card rev">
+          <p class="svc-price-card__label">Startprijs</p>
+          <p class="svc-price-card__price">€95</p>
+          <p class="svc-price-card__from">Combinatie van exterieur + interieur service</p>
+          <a href="contact.html" class="svc-price-card__cta">Boek Nu</a>
+          <div class="svc-price-card__info">
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>3 – 5 uur</strong>
+                <span>Geschatte behandeltijd</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Populairste service</strong>
+                <span>Meest gekozen door klanten</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Beste prijs-kwaliteit</strong>
+                <span>Bespaar t.o.v. afzonderlijk boeken</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     06 — FULL PRESTIGE DETAIL
+════════════════════════════════ -->
+<section id="full-detail" class="svc-section" style="background-image:url('assets/img/prestige-rs3-rear-plate.jpg'); background-position: center 45%;">
+  <div class="svc-hero">
+    <span class="svc-hero__number" aria-hidden="true">06</span>
+    <div class="svc-hero__content">
+      <span class="svc-hero__tag">Premium Pakket</span>
+      <h2 class="svc-hero__name">Full Prestige Detail</h2>
+      <span class="svc-hero__price-badge">Vanaf €250</span>
+    </div>
+  </div>
+
+  <div class="svc-body">
+    <div class="svc-body__inner">
+      <div class="svc-body__left rev">
+        <h3>De ultieme totaalbehandeling voor uw voertuig</h3>
+        <p>
+          De Full Prestige Detail is ons meest uitgebreide pakket — een volledige, meerdaagse behandeling waarbij elk onderdeel van uw voertuig de aandacht krijgt die het verdient. Van een grondige lakdecontaminatie en paint correction tot een vlekkeloze interieur­reiniging en professionele bescherming.
+        </p>
+        <p>
+          Dit pakket is de keuze voor auto­liefhebbers, oldtimers, sports­cars en iedereen die het absolute maximum wil voor zijn of haar voertuig. Het eindresultaat overtreft elke verwachting.
+        </p>
+        <div class="svc-includes">
+          <p class="svc-includes__title">Wat is inbegrepen</p>
+          <ul class="svc-includes__list">
+            <li>Decontaminatie & clay bar</li>
+            <li>Multi-step paint correction</li>
+            <li>Motorkap binnenste (indien gewenst)</li>
+            <li>Volledige interieur detail</li>
+            <li>Leder reiniging & conditioner</li>
+            <li>Velgen dieptereiniging</li>
+            <li>Engine bay reiniging</li>
+            <li>Wax of sealant bescherming</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        <div class="svc-price-card rev">
+          <p class="svc-price-card__label">Startprijs</p>
+          <p class="svc-price-card__price">€250</p>
+          <p class="svc-price-card__from">Prijs op maat na inspectie voertuig</p>
+          <a href="contact.html" class="svc-price-card__cta">Boek Nu</a>
+          <div class="svc-price-card__info">
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>1 – 2 volledige dagen</strong>
+                <span>Afhankelijk van voertuig & conditie</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Ons Premium Pakket</strong>
+                <span>De absolute totaalbehandeling</span>
+              </div>
+            </div>
+            <div class="svc-price-card__info-item">
+              <div class="svc-price-card__info-icon">
+                <svg fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="svc-price-card__info-text">
+                <strong>Showroom resultaat</strong>
+                <span>Gegarandeerde kwaliteit</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ── OVERVIEW GRID ── -->
+<section class="svc-overview">
+  <div class="svc-overview__head rev">
+    <p class="svc-overview__eyebrow">Volledig Overzicht</p>
+    <h2 class="svc-overview__title">Al onze services in één oogopslag</h2>
+  </div>
+  <div class="svc-grid">
+    <a href="#exterieur" class="svc-card rev">
+      <p class="svc-card__number">01 — Exterieur</p>
+      <h3 class="svc-card__title">Exterieur Detailing</h3>
+      <p class="svc-card__desc">Grondige handwas, velgen reiniging, ramen & lak­beschermer. Uw wagen blinkt als nieuw.</p>
+      <div class="svc-card__footer">
+        <span class="svc-card__price">€65</span>
+        <span class="svc-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+    <a href="#interieur" class="svc-card rev">
+      <p class="svc-card__number">02 — Interieur</p>
+      <h3 class="svc-card__title">Interieur Reiniging</h3>
+      <p class="svc-card__desc">Diepgaande stoomreiniging van elk oppervlak. Van stoelen tot dashboard — hygiënisch schoon.</p>
+      <div class="svc-card__footer">
+        <span class="svc-card__price">€85</span>
+        <span class="svc-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+    <a href="#paint-correction" class="svc-card rev">
+      <p class="svc-card__number">03 — Lak Herstel</p>
+      <h3 class="svc-card__title">Paint Correction</h3>
+      <p class="svc-card__desc">Machine polijsten verwijdert swirls, krassen & oxidatie. Een glasachtige glans die imponeert.</p>
+      <div class="svc-card__footer">
+        <span class="svc-card__price">€150</span>
+        <span class="svc-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+    <a href="#coating" class="svc-card rev">
+      <p class="svc-card__number">04 — Bescherming</p>
+      <h3 class="svc-card__title">Keramische Coating</h3>
+      <p class="svc-card__desc">Nano-bescherming die jaren meegaat. Waterafstotend, UV-resistent en krasbestendig.</p>
+      <div class="svc-card__footer">
+        <span class="svc-card__price">€350</span>
+        <span class="svc-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+    <a href="#combi" class="svc-card rev">
+      <p class="svc-card__number">05 — Populair</p>
+      <h3 class="svc-card__title">Combi Deal</h3>
+      <p class="svc-card__desc">Exterieur én interieur in één sessie. De meest gekozen service — ideaal als periodiek onderhoud.</p>
+      <div class="svc-card__footer">
+        <span class="svc-card__price">€95</span>
+        <span class="svc-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+    <a href="#full-detail" class="svc-card rev">
+      <p class="svc-card__number">06 — Premium</p>
+      <h3 class="svc-card__title">Full Prestige Detail</h3>
+      <p class="svc-card__desc">De meerdaagse totaalbehandeling. Elk detail, van lak tot leder — absoluut showroom­niveau.</p>
+      <div class="svc-card__footer">
+        <span class="svc-card__price">€250</span>
+        <span class="svc-card__arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="svc-faq">
+  <div class="svc-faq__inner">
+    <div class="svc-faq__head rev">
+      <p class="svc-faq__eyebrow">Veelgestelde Vragen</p>
+      <h2 class="svc-faq__title">Heeft u een vraag?</h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-item__q">
+        Hoe lang duurt een behandeling gemiddeld?
+        <span class="faq-item__icon" aria-hidden="true"></span>
+      </button>
+      <div class="faq-item__a">
+        Dit hangt af van de gekozen service en de grootte van het voertuig. Een exterieur detailing duurt gemiddeld 1,5 tot 2,5 uur. Een interieur reiniging 2 tot 4 uur. Paint correction en coating­trajecten kunnen 1 tot 2 volle dagen in beslag nemen. We communiceren altijd een realistische tijdsinschatting vooraf.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-item__q">
+        Waar vindt de behandeling plaats?
+        <span class="faq-item__icon" aria-hidden="true"></span>
+      </button>
+      <div class="faq-item__a">
+        Alle behandelingen vinden plaats op onze vaste locatie: Industriepark B18 bus 2, 2220 Heist-op-den-Berg. U brengt uw wagen bij ons langs op het afgesproken tijdstip. We beschikken over alle benodigde apparatuur, producten en ruimte voor een optimale behandeling.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-item__q">
+        Wat heb ik nodig om een afspraak te maken?
+        <span class="faq-item__icon" aria-hidden="true"></span>
+      </button>
+      <div class="faq-item__a">
+        Neem contact met ons op via het contactformulier of telefonisch. Geef het merk, model en de huidige conditie van uw wagen door. Op basis hiervan geven wij een gepersonaliseerde offerte en plannen we een afspraak in die past in uw agenda.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-item__q">
+        Is een keramische coating de moeite waard?
+        <span class="faq-item__icon" aria-hidden="true"></span>
+      </button>
+      <div class="faq-item__a">
+        Absoluut. Een keramische coating biedt jarenlange bescherming tegen UV, vuil, zout en fijne krassen. Uw wagen blijft langer schoon, is gemakkelijker te wassen en de lak behoudt zijn diepglans. Op lange termijn bespaart u ook op reguliere waskosten en beschermt u de waarde van uw voertuig.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-item__q">
+        Werken jullie ook met bestelwagens of grotere voertuigen?
+        <span class="faq-item__icon" aria-hidden="true"></span>
+      </button>
+      <div class="faq-item__a">
+        Ja, wij behandelen alle soorten voertuigen: personenwagens, SUV's, bestelwagens, oldtimers en sportswagens. De prijs past zich aan op basis van de grootte en conditie van het voertuig. Vraag gerust een offerte aan voor uw specifieke situatie.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-item__q">
+        In welke regio zijn jullie actief?
+        <span class="faq-item__icon" aria-hidden="true"></span>
+      </button>
+      <div class="faq-item__a">
+        Prestige Automotive is actief in en rond de regio. Neem contact op voor de exacte dekking in uw gemeente. We verplaatsen ons naar u toe — ook voor locaties op wat verder gelegen afstand zijn er mogelijkheden.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA STRIP ── -->
+<section class="svc-cta">
+  <h2 class="svc-cta__title rev">Klaar voor een <em>makelloze</em> wagen?</h2>
+  <p class="svc-cta__sub rev">Vraag vrijblijvend een offerte aan. We nemen snel contact op voor een persoonlijke afspraak.</p>
+  <a href="contact.html" class="svc-cta__btn rev">Offerte Aanvragen</a>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/img/logo-dark.png" alt="Prestige Automotive" class="footer__logo">
+        <p class="footer__tagline">Premium autodetailing op onze locatie.<br>Heist-op-den-Berg.</p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/_prestige_automotive" target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="https://www.facebook.com/people/Prestige-automotive/61555001006678/" target="_blank" rel="noopener" aria-label="Facebook"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer__h">Services</p>
+        <ul class="footer__ul">
+          <li><a href="services.html#exterieur">Exterieur Detailing</a></li>
+          <li><a href="services.html#interieur">Interieur Reiniging</a></li>
+          <li><a href="services.html#paint-correction">Paint Correction</a></li>
+          <li><a href="services.html#coating">Keramische Coating</a></li>
+          <li><a href="services.html#combi">Combi Deal</a></li>
+          <li><a href="services.html#full-detail">Full Prestige Detail</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__h">Navigatie</p>
+        <ul class="footer__ul">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="prijzen.html">Prijzen</a></li>
+          <li><a href="galerij.html">Galerij</a></li>
+          <li><a href="te-koop.html">Te Koop</a></li>
+          <li><a href="over-ons.html">Over Ons</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__h">Contact</p>
+        <ul class="footer__ul">
+          <li><a href="tel:+32498855865">+32 498 85 58 65</a></li>
+          <li><a href="mailto:Geoffrey@prestige-automotive.be">Geoffrey@prestige-automotive.be</a></li>
+          <li>Industriepark B18 bus 2</li>
+          <li>2220 Heist-op-den-Berg</li>
+          <li>Ma–Za: 8:00–19:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Prestige Automotive. Alle rechten voorbehouden.</p>
+      <p class="footer__badge">Premium Autodetailing · Belgi&euml;</p>
+    </div>
+  </div>
+</footer>
+
+</div><!-- .page-wrap -->
+
+<!-- ── FAB WhatsApp ── -->
+<a href="https://wa.me/32498855865" class="fab-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<!-- ── BACK TO TOP ── -->
+<button id="back-top" aria-label="Terug naar boven">
+  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script src="assets/js/main.js"></script>
+<script>
+  /* Alleen paginaspecifiek: actieve link in de sticky services-nav.
+     Progressbar, mobiel menu, scroll-reveals, FAQ-accordeon, smooth scroll
+     en back-to-top komen uit main.js — niet hier dupliceren. */
+  var svcNavLinks = document.querySelectorAll('.svc-nav__link');
+  var sections = ['exterieur','interieur','paint-correction','coating','combi','full-detail']
+    .map(function (id) { return document.getElementById(id); })
+    .filter(Boolean);
+
+  function updateSvcNav() {
+    var current = '';
+    sections.forEach(function (sec) {
+      if (window.scrollY + 150 >= sec.offsetTop) current = sec.id;
+    });
+    svcNavLinks.forEach(function (link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', updateSvcNav, { passive: true });
+  updateSvcNav();
+</script>
+</body>
+</html>

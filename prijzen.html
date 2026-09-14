@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prijzen — Prestige Automotive</title>
+  <link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="Transparante prijzen voor elk voertuigtype. Van kleine wagen tot SUV en bestelwagen — bekijk onze volledige prijslijst voor 2025.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ── PRIJZEN PAGE ── */
+
+    .prijs-hero {
+      position: relative;
+      height: 78vh;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      background: url('assets/img/prestige-rs3-seat-window.jpg') center 40% / cover no-repeat;
+      background-attachment: fixed;
+    }
+    .prijs-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,.90) 0%, rgba(0,0,0,.58) 55%, rgba(0,0,0,.78) 100%);
+    }
+    .prijs-hero__ghost {
+      position: absolute;
+      right: -1%;
+      bottom: -10%;
+      font-size: clamp(8rem, 22vw, 20rem);
+      font-weight: 900;
+      color: rgba(255,255,255,.025);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -.04em;
+    }
+    .prijs-hero__content {
+      position: relative;
+      z-index: 2;
+      padding: 0 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .prijs-hero__eyebrow {
+      font-size: .75rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .prijs-hero__title {
+      font-size: clamp(3rem, 7.5vw, 6.5rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.0;
+      margin-bottom: 1.25rem;
+    }
+    .prijs-hero__sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,.62);
+      max-width: 480px;
+      line-height: 1.72;
+      margin-bottom: 2.5rem;
+    }
+    .prijs-hero__badges {
+      display: flex;
+      gap: 2.25rem;
+      flex-wrap: wrap;
+    }
+    .prijs-hero__badge {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .85rem;
+      color: rgba(255,255,255,.58);
+    }
+    .prijs-hero__badge svg {
+      width: 18px; height: 18px;
+      stroke: var(--green);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── VEHICLE SELECTOR ── */
+    .vehicle-select-wrap {
+      background: rgba(245,245,243,.97);
+      backdrop-filter: blur(16px);
+      padding: 2rem 2rem 1.75rem;
+      border-bottom: 1px solid rgba(0,0,0,.1);
+    }
+    .vehicle-select-inner { max-width: 1200px; margin: 0 auto; }
+    .vehicle-select__label {
+      font-size: .65rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,.45);
+      font-weight: 600;
+      margin-bottom: .85rem;
+      display: block;
+    }
+    .vehicle-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+    }
+    .vehicle-tab {
+      background: rgba(0,0,0,.03);
+      border: 1px solid rgba(0,0,0,.1);
+      border-radius: 12px;
+      padding: 1.1rem .75rem .9rem;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .22s, background .22s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .55rem;
+      position: relative;
+    }
+    .vehicle-tab:hover {
+      border-color: rgba(0,0,0,.22);
+      background: rgba(0,0,0,.06);
+    }
+    .vehicle-tab.active {
+      border-color: var(--green);
+      background: rgba(56,168,26,.07);
+    }
+    .vehicle-tab__icon { width: 60px; height: 26px; display: flex; align-items: center; justify-content: center; }
+    .vehicle-tab__icon svg { width: 100%; height: 100%; overflow: visible; }
+    .vehicle-tab__icon .car-body { fill: rgba(0,0,0,.22); transition: fill .22s; }
+    .vehicle-tab__icon .car-wheel { fill: rgba(0,0,0,.22); transition: fill .22s; }
+    .vehicle-tab.active .car-body,
+    .vehicle-tab.active .car-wheel { fill: var(--green); }
+    .vehicle-tab__name {
+      font-size: .75rem;
+      font-weight: 700;
+      color: rgba(0,0,0,.5);
+      transition: color .22s;
+      line-height: 1.2;
+    }
+    .vehicle-tab.active .vehicle-tab__name { color: #111; }
+    .vehicle-tab__range {
+      font-size: .68rem;
+      color: rgba(0,0,0,.38);
+      transition: color .22s;
+    }
+    .vehicle-tab.active .vehicle-tab__range { color: var(--green); }
+
+    /* ── PRICE PANELS ── */
+    .prijs-panel-wrap {
+      background: #f5f5f3;
+      padding: 4rem 2rem 5.5rem;
+    }
+    .prijs-panel { display: none; max-width: 1200px; margin: 0 auto; }
+    .prijs-panel.active { display: block; }
+    .prijs-panel__head { text-align: center; margin-bottom: 3rem; }
+    .prijs-panel__tag {
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: .5rem;
+      display: block;
+    }
+    .prijs-panel__title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: #111;
+    }
+
+    .prijs-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+    .prijs-card {
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(0,0,0,.1);
+      border-radius: 16px;
+      padding: 1.75rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .prijs-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0,0,0,.2);
+      box-shadow: 0 24px 48px rgba(0,0,0,.12);
+    }
+    .prijs-card--pop {
+      border-color: var(--green);
+      background: rgba(56,168,26,.05);
+    }
+    .prijs-card--pop:hover {
+      border-color: var(--green);
+      box-shadow: 0 24px 48px rgba(56,168,26,.14);
+    }
+    .prijs-card__badge {
+      position: absolute;
+      top: 0; right: 0;
+      background: var(--green);
+      color: #000;
+      font-size: .58rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .3rem .7rem;
+      border-radius: 0 14px 0 8px;
+    }
+    .prijs-card__tag {
+      font-size: .62rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: .6rem;
+    }
+    .prijs-card__name {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 1.1rem;
+      line-height: 1.3;
+    }
+    .prijs-card__price-row {
+      display: flex;
+      align-items: baseline;
+      gap: .05rem;
+      margin-bottom: .2rem;
+    }
+    .prijs-card__from {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,.45);
+      align-self: flex-start;
+      margin-top: .6rem;
+      margin-right: .4rem;
+    }
+    .prijs-card__euro {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1;
+      align-self: flex-start;
+      margin-top: .4rem;
+    }
+    .prijs-card__amount {
+      font-size: 2.9rem;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+    }
+    .prijs-card__note {
+      font-size: .68rem;
+      color: rgba(0,0,0,.4);
+      margin-bottom: 1.25rem;
+    }
+    .prijs-card__divider {
+      height: 1px;
+      background: rgba(0,0,0,.09);
+      margin-bottom: 1.1rem;
+    }
+    .prijs-card__list {
+      list-style: none;
+      padding: 0; margin: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: .52rem;
+      flex: 1;
+    }
+    .prijs-card__list li {
+      font-size: .82rem;
+      color: rgba(0,0,0,.6);
+      display: flex;
+      align-items: flex-start;
+      gap: .5rem;
+      line-height: 1.4;
+    }
+    .prijs-card__list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 14px; height: 14px;
+      margin-top: .1rem;
+      border-radius: 50%;
+      background-color: rgba(56,168,26,.15);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 8'%3E%3Cpath fill='none' stroke='%2338a81a' stroke-width='1.8' stroke-linecap='round' d='M1 4l2.5 2.5L9 1'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 8px;
+    }
+    .prijs-card__btn {
+      display: block;
+      text-align: center;
+      background: transparent;
+      border: 1px solid rgba(0,0,0,.18);
+      color: rgba(0,0,0,.55);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .8rem;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 1.4rem;
+      transition: all .2s;
+    }
+    .prijs-card__btn:hover,
+    .prijs-card--pop .prijs-card__btn {
+      background: var(--green);
+      border-color: var(--green);
+      color: #000;
+      font-weight: 800;
+    }
+
+    /* Sport custom panel */
+    .prijs-sport {
+      text-align: center;
+      padding: 5rem 0;
+    }
+    .prijs-sport__eyebrow {
+      font-size: .72rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+    .prijs-sport__title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 1.25rem;
+    }
+    .prijs-sport__sub {
+      font-size: 1rem;
+      color: rgba(0,0,0,.52);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+    .prijs-sport__actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── COMPARISON TABLE ── */
+    .prijs-compare {
+      background: #eceae8;
+      padding: 5rem 2rem;
+      border-top: 1px solid rgba(0,0,0,.08);
+    }
+    .prijs-compare__inner { max-width: 1200px; margin: 0 auto; }
+    .prijs-compare__head { margin-bottom: 2.5rem; }
+    .prijs-compare__eyebrow {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: .6rem;
+      display: block;
+    }
+    .prijs-compare__title {
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: #111;
+    }
+    .prijs-compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .prijs-compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+    .prijs-compare-table thead th {
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,.45);
+      padding: .85rem 1.1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,0,0,.1);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .prijs-compare-table thead th:first-child { color: rgba(0,0,0,.7); }
+    .prijs-compare-table tbody td {
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid rgba(0,0,0,.07);
+      font-size: .88rem;
+      color: rgba(0,0,0,.55);
+      white-space: nowrap;
+    }
+    .prijs-compare-table tbody tr:hover td { background: rgba(0,0,0,.03); }
+    .prijs-compare-table tbody td:first-child {
+      font-weight: 600;
+      color: rgba(0,0,0,.78);
+    }
+    .prijs-compare-table .pop-row td {
+      color: var(--green);
+      font-weight: 700;
+      background: rgba(56,168,26,.05);
+    }
+    .prijs-compare-table .pop-row td:first-child {
+      color: #111;
+    }
+    .pop-star::after { content: ' ★'; color: var(--green); }
+
+    /* ── INCLUDED ── */
+    .prijs-included {
+      padding: 6.5rem 2rem;
+      background: #f5f5f3;
+    }
+    .prijs-included__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5.5rem;
+      align-items: center;
+    }
+    .prijs-included__eyebrow {
+      font-size: .7rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: .75rem;
+      display: block;
+    }
+    .prijs-included__title {
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 2.75rem;
+      line-height: 1.08;
+    }
+    .included-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.6rem;
+      margin-bottom: 2.5rem;
+    }
+    .included-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .9rem;
+    }
+    .included-item__icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: rgba(56,168,26,.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .included-item__icon svg {
+      width: 20px; height: 20px;
+      stroke: var(--green);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .included-item__text strong {
+      display: block;
+      font-size: .88rem;
+      color: #111;
+      margin-bottom: .2rem;
+      font-weight: 700;
+    }
+    .included-item__text span {
+      font-size: .78rem;
+      color: rgba(0,0,0,.5);
+      line-height: 1.45;
+    }
+    .prijs-included__img-wrap { position: relative; }
+    .prijs-included__img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      border-radius: 16px;
+      display: block;
+    }
+    .prijs-included__img-accent {
+      position: absolute;
+      inset: -14px 14px 14px -14px;
+      border: 1px solid rgba(56,168,26,.4);
+      border-radius: 16px;
+      z-index: -1;
+    }
+
+    /* ── STATS ── */
+    .prijs-stats {
+      background: #eceae8;
+      padding: 4rem 2rem;
+      border-top: 1px solid rgba(0,0,0,.08);
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .prijs-stats__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+    .prijs-stat__number {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: .5rem;
+    }
+    .prijs-stat__label {
+      font-size: .8rem;
+      color: rgba(0,0,0,.5);
+      line-height: 1.4;
+    }
+
+    /* ── CTA ── */
+    .prijs-cta {
+      padding: 7rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: #e3e1df;
+    }
+    .prijs-cta__bg {
+      position: absolute;
+      inset: 0;
+      background: url('assets/img/prestige-rs3-cluster.jpg') center / cover no-repeat;
+      opacity: .05;
+    }
+    .prijs-cta__content { position: relative; z-index: 2; }
+    .prijs-cta__eyebrow {
+      font-size: .72rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .prijs-cta__title {
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      font-weight: 800;
+      color: #111;
+      line-height: 1.05;
+      margin-bottom: 1.25rem;
+    }
+    .prijs-cta__title em { color: var(--green); font-style: normal; }
+    .prijs-cta__sub {
+      font-size: 1.05rem;
+      color: rgba(0,0,0,.52);
+      max-width: 500px;
+      margin: 0 auto 2.75rem;
+      line-height: 1.72;
+    }
+    .prijs-cta__actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .prijs-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .88rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 1.1rem 2.4rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all .25s;
+    }
+    .prijs-btn--green { background: var(--green); color: #000; }
+    .prijs-btn--green:hover { opacity: .88; transform: translateY(-2px); }
+    .prijs-btn--ghost { background: transparent; color: rgba(0,0,0,.6); border: 1px solid rgba(0,0,0,.25); }
+    .prijs-btn--ghost:hover { border-color: rgba(0,0,0,.55); color: #111; }
+
+    /* Responsive */
+    @media (max-width: 1100px) { .prijs-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px) {
+      .prijs-grid { grid-template-columns: repeat(2, 1fr); }
+      .vehicle-tab { padding: .9rem .5rem .75rem; }
+      .vehicle-tab__name { font-size: .7rem; }
+      .vehicle-tab__range { display: none; }
+      .prijs-included__inner { grid-template-columns: 1fr; gap: 3rem; }
+      .prijs-stats__inner { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .prijs-grid { grid-template-columns: 1fr; }
+      .vehicle-tabs { grid-template-columns: repeat(3, 1fr); }
+      .prijs-hero { background-attachment: scroll; }
+      .included-grid { grid-template-columns: 1fr; }
+      .prijs-hero__badges { gap: 1.25rem; }
+    }
+    @media (max-width: 400px) {
+      .vehicle-tabs { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav__logo"><img src="assets/img/LOGO+AUTOMOTIVE+TRANSPARANT+BG.png" alt="Prestige Automotive" class="logo--light"><img src="assets/img/logo-dark.png" alt="" aria-hidden="true" class="logo--dark"></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="prijzen.html" class="active">Prijzen</a></li>
+    <li><a href="galerij.html">Galerij</a></li>
+    <li><a href="te-koop.html">Te Koop</a></li>
+    <li><a href="over-ons.html">Over Ons</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__right">
+    <a href="contact.html" class="nav__cta">Offerte Aanvragen</a>
+    <button class="nav__burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav__mobile">
+  <a href="index.html">Home</a>
+  <a href="services.html">Services</a>
+  <a href="prijzen.html">Prijzen</a>
+  <a href="galerij.html">Galerij</a>
+  <a href="te-koop.html">Te Koop</a>
+  <a href="over-ons.html">Over Ons</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="nav__mobile-cta">Offerte Aanvragen</a>
+</div>
+
+<!-- ── HERO ── -->
+<div class="page-wrap">
+
+<section class="prijs-hero">
+  <span class="prijs-hero__ghost" aria-hidden="true">PRIJS</span>
+  <div class="prijs-hero__content rev">
+    <span class="prijs-hero__eyebrow">Prijslijst</span>
+    <h1 class="prijs-hero__title">Transparante<br>prijzen</h1>
+    <p class="prijs-hero__sub">Geen verborgen kosten. Kies uw voertuigtype en ontdek welk pakket het best bij u past.</p>
+    <div class="prijs-hero__badges">
+      <span class="prijs-hero__badge">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+        Gratis binnen 30 km
+      </span>
+      <span class="prijs-hero__badge">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        BTW-factuur beschikbaar
+      </span>
+      <span class="prijs-hero__badge">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        A-merk producten
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ── VEHICLE SELECTOR (sticky) ── -->
+<div class="vehicle-select-wrap">
+  <div class="vehicle-select-inner">
+    <span class="vehicle-select__label">Kies uw voertuigtype</span>
+    <div class="vehicle-tabs" role="tablist">
+
+      <button class="vehicle-tab active" data-tab="small" role="tab" aria-selected="true" aria-controls="panel-small">
+        <div class="vehicle-tab__icon">
+          <svg viewBox="0 0 80 32" xmlns="http://www.w3.org/2000/svg">
+            <path class="car-body" d="M4,26 L8,16 L18,10 L44,10 L54,14 L73,18 L73,26 Z"/>
+            <circle class="car-wheel" cx="20" cy="26" r="5"/>
+            <circle class="car-wheel" cx="58" cy="26" r="5"/>
+          </svg>
+        </div>
+        <span class="vehicle-tab__name">Kleine Wagen</span>
+        <span class="vehicle-tab__range">vanaf €65</span>
+      </button>
+
+      <button class="vehicle-tab" data-tab="medium" role="tab" aria-selected="false" aria-controls="panel-medium">
+        <div class="vehicle-tab__icon">
+          <svg viewBox="0 0 80 32" xmlns="http://www.w3.org/2000/svg">
+            <path class="car-body" d="M4,26 L10,14 L22,8 L54,8 L64,13 L75,20 L75,26 Z"/>
+            <circle class="car-wheel" cx="20" cy="26" r="5"/>
+            <circle class="car-wheel" cx="60" cy="26" r="5"/>
+          </svg>
+        </div>
+        <span class="vehicle-tab__name">Berline / Coupé</span>
+        <span class="vehicle-tab__range">vanaf €75</span>
+      </button>
+
+      <button class="vehicle-tab" data-tab="large" role="tab" aria-selected="false" aria-controls="panel-large">
+        <div class="vehicle-tab__icon">
+          <svg viewBox="0 0 80 32" xmlns="http://www.w3.org/2000/svg">
+            <path class="car-body" d="M4,26 L4,10 L14,8 L64,8 L75,14 L75,26 Z"/>
+            <circle class="car-wheel" cx="18" cy="26" r="5"/>
+            <circle class="car-wheel" cx="60" cy="26" r="5"/>
+          </svg>
+        </div>
+        <span class="vehicle-tab__name">SUV / Break</span>
+        <span class="vehicle-tab__range">vanaf €85</span>
+      </button>
+
+      <button class="vehicle-tab" data-tab="sport" role="tab" aria-selected="false" aria-controls="panel-sport">
+        <div class="vehicle-tab__icon">
+          <svg viewBox="0 0 80 32" xmlns="http://www.w3.org/2000/svg">
+            <path class="car-body" d="M2,26 L10,20 L18,14 L38,12 L58,12 L70,18 L78,24 L78,26 Z"/>
+            <circle class="car-wheel" cx="18" cy="26" r="5"/>
+            <circle class="car-wheel" cx="62" cy="26" r="5"/>
+          </svg>
+        </div>
+        <span class="vehicle-tab__name">Sportswagen</span>
+        <span class="vehicle-tab__range">Op aanvraag</span>
+      </button>
+
+      <button class="vehicle-tab" data-tab="bestel" role="tab" aria-selected="false" aria-controls="panel-bestel">
+        <div class="vehicle-tab__icon">
+          <svg viewBox="0 0 80 32" xmlns="http://www.w3.org/2000/svg">
+            <path class="car-body" d="M4,26 L4,8 L54,8 L54,12 L70,16 L76,22 L76,26 Z"/>
+            <circle class="car-wheel" cx="18" cy="26" r="5"/>
+            <circle class="car-wheel" cx="62" cy="26" r="5"/>
+          </svg>
+        </div>
+        <span class="vehicle-tab__name">Bestelwagen</span>
+        <span class="vehicle-tab__range">vanaf €95</span>
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── PRICE PANELS ── -->
+<div class="prijs-panel-wrap">
+
+  <!-- KLEINE WAGEN -->
+  <div class="prijs-panel active" id="panel-small" role="tabpanel">
+    <div class="prijs-panel__head">
+      <span class="prijs-panel__tag">Kleine Wagen</span>
+      <h2 class="prijs-panel__title">Kies uw pakket</h2>
+    </div>
+    <div class="prijs-grid">
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Exterieur</span>
+        <h3 class="prijs-card__name">Exterieur Wash</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">65</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list">
+          <li>Handwas exterieur</li>
+          <li>Velgen &amp; banden</li>
+          <li>Ramen reinigen</li>
+          <li>Wax beschermlaag</li>
+        </ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Interieur</span>
+        <h3 class="prijs-card__name">Interieur Clean</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">75</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list">
+          <li>Stofzuigen &amp; borstelen</li>
+          <li>Dashboard &amp; portieren</li>
+          <li>Stoelen &amp; tapijt</li>
+          <li>Geurreiniger</li>
+        </ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card prijs-card--pop rev">
+        <span class="prijs-card__badge">Populairst</span>
+        <span class="prijs-card__tag">Combi</span>
+        <h3 class="prijs-card__name">Exterieur + Interieur</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">95</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list">
+          <li>Volledige handwas</li>
+          <li>Interieur dieptereiniging</li>
+          <li>Velgen &amp; ramen</li>
+          <li>Wax beschermlaag</li>
+        </ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Lak</span>
+        <h3 class="prijs-card__name">1 Stap Polijsten</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">130</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list">
+          <li>Machine polish</li>
+          <li>Krasverwijdering</li>
+          <li>Lakbescherming</li>
+          <li>Eindcontrole LED</li>
+        </ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Premium</span>
+        <h3 class="prijs-card__name">Full Prestige Detail</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">250</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list">
+          <li>Paint correction</li>
+          <li>Keramische coating</li>
+          <li>Full interieur detail</li>
+          <li>1 jaar garantie</li>
+        </ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BERLINE / COUPÉ -->
+  <div class="prijs-panel" id="panel-medium" role="tabpanel">
+    <div class="prijs-panel__head">
+      <span class="prijs-panel__tag">Berline / Coupé</span>
+      <h2 class="prijs-panel__title">Kies uw pakket</h2>
+    </div>
+    <div class="prijs-grid">
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Exterieur</span>
+        <h3 class="prijs-card__name">Exterieur Wash</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">75</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Handwas exterieur</li><li>Velgen &amp; banden</li><li>Ramen reinigen</li><li>Wax beschermlaag</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Interieur</span>
+        <h3 class="prijs-card__name">Interieur Clean</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">85</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Stofzuigen &amp; borstelen</li><li>Dashboard &amp; portieren</li><li>Stoelen &amp; tapijt</li><li>Geurreiniger</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card prijs-card--pop rev">
+        <span class="prijs-card__badge">Populairst</span>
+        <span class="prijs-card__tag">Combi</span>
+        <h3 class="prijs-card__name">Exterieur + Interieur</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">135</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Volledige handwas</li><li>Interieur dieptereiniging</li><li>Velgen &amp; ramen</li><li>Wax beschermlaag</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Lak</span>
+        <h3 class="prijs-card__name">1 Stap Polijsten</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">185</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Machine polish</li><li>Krasverwijdering</li><li>Lakbescherming</li><li>Eindcontrole LED</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Premium</span>
+        <h3 class="prijs-card__name">Full Prestige Detail</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">295</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Paint correction</li><li>Keramische coating</li><li>Full interieur detail</li><li>1 jaar garantie</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUV / BREAK -->
+  <div class="prijs-panel" id="panel-large" role="tabpanel">
+    <div class="prijs-panel__head">
+      <span class="prijs-panel__tag">SUV / Break</span>
+      <h2 class="prijs-panel__title">Kies uw pakket</h2>
+    </div>
+    <div class="prijs-grid">
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Exterieur</span>
+        <h3 class="prijs-card__name">Exterieur Wash</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">85</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Handwas exterieur</li><li>Velgen &amp; banden</li><li>Ramen reinigen</li><li>Wax beschermlaag</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Interieur</span>
+        <h3 class="prijs-card__name">Interieur Clean</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">95</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Stofzuigen &amp; borstelen</li><li>Dashboard &amp; portieren</li><li>Stoelen &amp; tapijt</li><li>Geurreiniger</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card prijs-card--pop rev">
+        <span class="prijs-card__badge">Populairst</span>
+        <span class="prijs-card__tag">Combi</span>
+        <h3 class="prijs-card__name">Exterieur + Interieur</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">149</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Volledige handwas</li><li>Interieur dieptereiniging</li><li>Velgen &amp; ramen</li><li>Wax beschermlaag</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Lak</span>
+        <h3 class="prijs-card__name">1 Stap Polijsten</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">225</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Machine polish</li><li>Krasverwijdering</li><li>Lakbescherming</li><li>Eindcontrole LED</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Premium</span>
+        <h3 class="prijs-card__name">Full Prestige Detail</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">345</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Paint correction</li><li>Keramische coating</li><li>Full interieur detail</li><li>1 jaar garantie</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPORTSWAGEN -->
+  <div class="prijs-panel" id="panel-sport" role="tabpanel">
+    <div class="prijs-sport">
+      <span class="prijs-sport__eyebrow">Op Maat</span>
+      <h2 class="prijs-sport__title">Offerte op aanvraag</h2>
+      <p class="prijs-sport__sub">Sportwagens en klassiekers vereisen extra zorg en maatwerk. Stuur ons foto's van uw voertuig en wij bezorgen u een gepersonaliseerde offerte — snel en vrijblijvend.</p>
+      <div class="prijs-sport__actions">
+        <a href="contact.html" class="prijs-btn prijs-btn--green">Offerte Aanvragen</a>
+        <a href="contact.html" class="prijs-btn prijs-btn--ghost">Contactformulier</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BESTELWAGEN -->
+  <div class="prijs-panel" id="panel-bestel" role="tabpanel">
+    <div class="prijs-panel__head">
+      <span class="prijs-panel__tag">Bestelwagen</span>
+      <h2 class="prijs-panel__title">Kies uw pakket</h2>
+    </div>
+    <div class="prijs-grid">
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Exterieur</span>
+        <h3 class="prijs-card__name">Exterieur Wash</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">95</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Handwas exterieur</li><li>Velgen &amp; banden</li><li>Ramen reinigen</li><li>Wax beschermlaag</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Interieur</span>
+        <h3 class="prijs-card__name">Interieur Clean</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">110</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Stofzuigen &amp; borstelen</li><li>Dashboard &amp; portieren</li><li>Laadruimte reiniging</li><li>Geurreiniger</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card prijs-card--pop rev">
+        <span class="prijs-card__badge">Populairst</span>
+        <span class="prijs-card__tag">Combi</span>
+        <h3 class="prijs-card__name">Exterieur + Interieur</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">165</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Volledige handwas</li><li>Interieur + laadruimte</li><li>Velgen &amp; ramen</li><li>Wax beschermlaag</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Lak</span>
+        <h3 class="prijs-card__name">1 Stap Polijsten</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">195</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Machine polish</li><li>Krasverwijdering</li><li>Lakbescherming</li><li>Eindcontrole LED</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+      <div class="prijs-card rev">
+        <span class="prijs-card__tag">Premium</span>
+        <h3 class="prijs-card__name">Full Prestige Detail</h3>
+        <div class="prijs-card__price-row"><span class="prijs-card__from">vanaf</span><span class="prijs-card__euro">€</span><span class="prijs-card__amount">320</span></div>
+        <div class="prijs-card__divider"></div>
+        <ul class="prijs-card__list"><li>Paint correction</li><li>Keramische coating</li><li>Full interieur detail</li><li>1 jaar garantie</li></ul>
+        <a href="contact.html" class="prijs-card__btn">Boek aan</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── COMPARISON TABLE ── -->
+<section class="prijs-compare">
+  <div class="prijs-compare__inner">
+    <div class="prijs-compare__head rev">
+      <span class="prijs-compare__eyebrow">Volledig Overzicht</span>
+      <h2 class="prijs-compare__title">Alle prijzen in één oogopslag</h2>
+    </div>
+    <div class="prijs-compare-scroll rev">
+      <table class="prijs-compare-table">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Kleine Wagen</th>
+            <th>Berline / Coupé</th>
+            <th>SUV / Break</th>
+            <th>Sportswagen</th>
+            <th>Bestelwagen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Exterieur Wash</td>
+            <td>vanaf €65</td><td>vanaf €75</td><td>vanaf €85</td><td>Op aanvraag</td><td>vanaf €95</td>
+          </tr>
+          <tr>
+            <td>Interieur Clean</td>
+            <td>vanaf €75</td><td>vanaf €85</td><td>vanaf €95</td><td>Op aanvraag</td><td>vanaf €110</td>
+          </tr>
+          <tr class="pop-row">
+            <td><span class="pop-star">Exterieur + Interieur</span></td>
+            <td>vanaf €95</td><td>vanaf €135</td><td>vanaf €149</td><td>Op aanvraag</td><td>vanaf €165</td>
+          </tr>
+          <tr>
+            <td>1 Stap Polijsten</td>
+            <td>vanaf €130</td><td>vanaf €185</td><td>vanaf €225</td><td>Op aanvraag</td><td>vanaf €195</td>
+          </tr>
+          <tr>
+            <td>Full Prestige Detail</td>
+            <td>vanaf €250</td><td>vanaf €295</td><td>vanaf €345</td><td>Op aanvraag</td><td>vanaf €320</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── INCLUDED ── -->
+<section class="prijs-included">
+  <div class="prijs-included__inner">
+    <div class="prijs-included__left">
+      <span class="prijs-included__eyebrow rev">Altijd Inbegrepen</span>
+      <h2 class="prijs-included__title rev">Wat zit er<br>altijd bij?</h2>
+      <div class="included-grid rev">
+        <div class="included-item">
+          <div class="included-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="included-item__text">
+            <strong>A-merk producten</strong>
+            <span>Professionele materialen van topkwaliteit</span>
+          </div>
+        </div>
+        <div class="included-item">
+          <div class="included-item__icon">
+            <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="included-item__text">
+            <strong>Kwaliteitscheck</strong>
+            <span>Eindcontrole na elke behandeling</span>
+          </div>
+        </div>
+        <div class="included-item">
+          <div class="included-item__icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <div class="included-item__text">
+            <strong>BTW-factuur</strong>
+            <span>Voor zelfstandigen en bedrijven</span>
+          </div>
+        </div>
+        <div class="included-item">
+          <div class="included-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="included-item__text">
+            <strong>Eigen water &amp; stroom</strong>
+            <span>Aanwezig op onze locatie</span>
+          </div>
+        </div>
+        <div class="included-item">
+          <div class="included-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="included-item__text">
+            <strong>Persoonlijk advies</strong>
+            <span>Op maat voor toekomstig onderhoud</span>
+          </div>
+        </div>
+      </div>
+      <a href="contact.html" class="prijs-btn prijs-btn--green rev">Offerte Aanvragen</a>
+    </div>
+    <div class="prijs-included__img-wrap rev">
+      <img src="assets/img/mason-jones-LW3FskrgQ9M-unsplash.jpg" alt="Professionele autodetailing" class="prijs-included__img">
+      <div class="prijs-included__img-accent"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="prijs-stats">
+  <div class="prijs-stats__inner">
+    <div class="rev">
+      <div class="prijs-stat__number">5</div>
+      <div class="prijs-stat__label">Voertuigtypen, elk op maat</div>
+    </div>
+    <div class="rev">
+      <div class="prijs-stat__number">6</div>
+      <div class="prijs-stat__label">Diensten beschikbaar</div>
+    </div>
+    <div class="rev">
+      <div class="prijs-stat__number">100<span style="font-size:1.6rem">%</span></div>
+      <div class="prijs-stat__label">Professionele aanpak, altijd</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA ── -->
+<section class="prijs-cta">
+  <div class="prijs-cta__bg"></div>
+  <div class="prijs-cta__content">
+    <span class="prijs-cta__eyebrow rev">Twijfelt u nog?</span>
+    <h2 class="prijs-cta__title rev">Vraag een <em>gratis offerte</em> aan</h2>
+    <p class="prijs-cta__sub rev">Stuur een paar foto's via het contactformulier en wij bezorgen u een gepersonaliseerde prijs — zonder verplichtingen.</p>
+    <div class="prijs-cta__actions rev">
+      <a href="contact.html" class="prijs-btn prijs-btn--green">Offerte Aanvragen</a>
+      <a href="contact.html" class="prijs-btn prijs-btn--ghost">Contactformulier</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/img/logo-dark.png" alt="Prestige Automotive" class="footer__logo">
+        <p class="footer__tagline">Premium autodetailing op onze locatie.<br>Heist-op-den-Berg.</p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/_prestige_automotive" target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="https://www.facebook.com/people/Prestige-automotive/61555001006678/" target="_blank" rel="noopener" aria-label="Facebook"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer__h">Services</p>
+        <ul class="footer__ul">
+          <li><a href="services.html#exterieur">Exterieur Detailing</a></li>
+          <li><a href="services.html#interieur">Interieur Reiniging</a></li>
+          <li><a href="services.html#paint-correction">1 Stap Polijsten</a></li>
+          <li><a href="services.html#coating">Keramische Coating</a></li>
+          <li><a href="services.html#combi">Combi Deal</a></li>
+          <li><a href="services.html#full-detail">Full Prestige Detail</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__h">Navigatie</p>
+        <ul class="footer__ul">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="prijzen.html">Prijzen</a></li>
+          <li><a href="galerij.html">Galerij</a></li>
+          <li><a href="te-koop.html">Te Koop</a></li>
+          <li><a href="over-ons.html">Over Ons</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__h">Contact</p>
+        <ul class="footer__ul">
+          <li><a href="tel:+32498855865">+32 498 85 58 65</a></li>
+          <li><a href="mailto:Geoffrey@prestige-automotive.be">Geoffrey@prestige-automotive.be</a></li>
+          <li>Industriepark B18 bus 2</li>
+          <li>2220 Heist-op-den-Berg</li>
+          <li>Ma–Za: 8:00–19:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Prestige Automotive. Alle rechten voorbehouden.</p>
+      <p class="footer__badge">Premium Autodetailing · Belgi&euml;</p>
+    </div>
+  </div>
+</footer>
+
+</div><!-- .page-wrap -->
+
+<!-- ── FAB WhatsApp ── -->
+<a href="https://wa.me/32498855865" class="fab-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<!-- ── BACK TO TOP ── -->
+<button id="back-top" aria-label="Terug naar boven">
+  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script src="assets/js/main.js"></script>
+<script>
+  /* Alleen paginaspecifiek: wisselen tussen de voertuigklassen.
+     Progressbar, mobiel menu, scroll-reveals en back-to-top komen uit main.js. */
+  var tabs = document.querySelectorAll('.vehicle-tab');
+  var panels = document.querySelectorAll('.prijs-panel');
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+      panels.forEach(function (p) { p.classList.remove('active'); });
+
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+
+      var panel = document.getElementById('panel-' + tab.dataset.tab);
+      if (panel) {
+        panel.classList.add('active');
+        panel.querySelectorAll('.rev:not(.in)').forEach(function (el) { el.classList.add('in'); });
+      }
+    });
+  });
+</script>
+</body>
+</html>
