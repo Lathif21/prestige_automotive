@@ -218,7 +218,13 @@
       })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (b) { return { r: r, b: b }; }); })
         .then(function (res) {
-          if (!res.r.ok || !res.b.ok) throw new Error(res.b.error || 'Verzenden is niet gelukt.');
+          if (!res.r.ok || !res.b.ok) {
+            // Markeren als afkomstig van de server: die meldingen zijn Nederlands
+            // en mogen aan de bezoeker getoond worden. Netwerkfouten niet.
+            var e = new Error(res.b.error || 'Verzenden is niet gelukt.');
+            e.fromServer = true;
+            throw e;
+          }
           btn.textContent = 'Bericht verstuurd ✓';
           show('Bedankt! We nemen zo snel mogelijk contact met u op.', true);
           form.reset();
@@ -231,7 +237,12 @@
         .catch(function (err) {
           btn.textContent = original;
           btn.disabled = false;
-          show(err.message + ' Bel ons op +32 498 85 58 65 of mail rechtstreeks.', false);
+          // Een netwerkfout geeft browserteksten als "Load failed" (Safari) of
+          // "Failed to fetch" (Chrome). Die horen niet op een Nederlandse pagina.
+          var msg = err && err.fromServer
+            ? err.message
+            : 'Geen verbinding met de server.';
+          show(msg + ' Bel ons op +32 498 85 58 65 of mail rechtstreeks.', false);
         });
     });
   }

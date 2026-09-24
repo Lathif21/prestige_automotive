@@ -122,6 +122,11 @@ export default async (request) => {
   try {
     res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
+      // Zonder timeout blijft de functie hangen tot Netlify hem afkapt (10 s).
+      // De browser ziet dan geen HTTP-antwoord maar een netwerkfout, en toont
+      // "Load failed" in plaats van een nette melding. 8 s laat ons binnen de
+      // limiet zelf een JSON-fout teruggeven.
+      signal: AbortSignal.timeout(8000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -136,7 +141,11 @@ export default async (request) => {
       })
     });
   } catch (err) {
-    console.error('Resend-fout (netwerk):', err);
+    if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+      console.error('Resend-fout: time-out na 8 s');
+    } else {
+      console.error('Resend-fout (netwerk):', err);
+    }
     return json(502, { ok: false, error: 'Verzenden is niet gelukt.' });
   }
 
