@@ -1,0 +1,57 @@
+﻿DNS-BACKUP  prestige-automotive.be
+opgehaald: 2026-09-25 00:52 lokale tijd
+bron: Resolve-DnsName via publieke resolver 8.8.8.8
+LET OP: dit toont alleen wat publiek opvraagbaar is. Controleer het
+tegen het Combell-paneel voor records op subdomeinen die hier ontbreken.
+======================================================================
+
+--- A ---
+  prestige-automotive.be             TTL=406    198.49.23.145
+  prestige-automotive.be             TTL=406    198.185.159.145
+  prestige-automotive.be             TTL=406    198.49.23.144
+  prestige-automotive.be             TTL=406    198.185.159.144
+
+--- AAAA ---
+  (geen)
+
+--- MX ---
+  prestige-automotive.be             TTL=3568   pref=1 smtp.google.com
+
+--- TXT ---
+  prestige-automotive.be             TTL=3568   "v=spf1 mx a include:_spf.relay.mailprotect.be ~all"
+  prestige-automotive.be             TTL=3568   "google-site-verification=RUviNQk__PXyng5xw5VdTKSGochg1DDgplnK0x5h7Aw"
+
+--- NS ---
+  prestige-automotive.be             TTL=85110  ns1.combell.eu
+  prestige-automotive.be             TTL=85110  ns4.combell.net
+  prestige-automotive.be             TTL=85110  ns3.combell.net
+
+--- CNAME ---
+  (geen)
+
+--- SRV ---
+  (geen)
+
+--- CAA ---
+  (geen)
+
+--- www.prestige-automotive.be ---
+  www.prestige-automotive.be         CNAME   TTL=564    ext-cust.squarespace.com
+  ext-cust.squarespace.com           A       TTL=296    198.185.159.144
+  ext-cust.squarespace.com           A       TTL=296    198.49.23.144
+  ext-cust.squarespace.com           A       TTL=296    198.49.23.145
+  ext-cust.squarespace.com           A       TTL=296    198.185.159.145
+
+--- ftp.prestige-automotive.be ---
+  ftp.prestige-automotive.be         A       TTL=3567   217.21.190.139
+
+--- rsend.prestige-automotive.be ---
+  (geen)
+
+--- send.prestige-automotive.be ---
+  (geen)
+
+--- resend._domainkey.prestige-automotive.be ---
+  (geen)
+
+--- _dmarc.prestige-automotive.be ---

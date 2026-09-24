@@ -1,0 +1,77 @@
+# Prestige Automotive - Apache-configuratie voor Combell (Linux hosting)
+# Hoort in de webroot (/www). Zie docs/COMBELL-DEPLOY.md.
+
+# Geen mapinhoud tonen als er geen index-bestand is.
+Options -Indexes
+
+DirectoryIndex index.html index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # -- HTTPS afdwingen --
+  # STAAT BEWUST UIT tot het Let's Encrypt-certificaat actief is. Let's Encrypt
+  # kan pas een certificaat uitreiken als de DNS al naar Combell wijst - zet je
+  # deze regels te vroeg aan, dan is de site onbereikbaar in dat tussenvenster.
+  # deploy/setup-combell.sh zet ze in de laatste stap zelf aan, of haal hier
+  # met de hand de # weg zodra https:// werkt.
+  # @HTTPS-REDIRECT-START
+  #RewriteCond %{HTTPS} !=on
+  #RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  #RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+  # @HTTPS-REDIRECT-END
+
+  # -- Canonieke hostnaam --
+  # Kies er een en haal het commentaar weg. Zonder dit zijn www. en de kale
+  # domeinnaam allebei bereikbaar, wat zoekmachines als twee sites zien.
+  # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  # RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+  # -- Contactformulier --
+  # contact.html post naar /api/contact (zonder .php). Deze regel stuurt dat
+  # door naar het PHP-script, zodat de HTML ongewijzigd blijft t.o.v. de
+  # Cloudflare-versie.
+  RewriteRule ^api/contact/?$ api/contact.php [L]
+
+  # Bewust GEEN regel die .html uit de URL haalt: de site linkt overal naar
+  # /over-ons.html enz., en een tweede werkende URL voor dezelfde pagina telt
+  # voor zoekmachines als dubbele inhoud.
+</IfModule>
+
+# -- Gevoelige bestanden afschermen --
+# Het configuratiebestand hoort BOVEN de webroot te staan. Staat het er per
+# ongeluk toch in, dan blokkeert dit het alsnog.
+<FilesMatch "^(prestige-config\.php|\.env|.*\.md|\.gitignore)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml application/manifest+json
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # HTML kort cachen: bij een nieuwe upload zien bezoekers de wijziging snel.
+  ExpiresByType text/html                 "access plus 10 minutes"
+  # Assets langer - vervang de bestandsnaam bij een echte wijziging, of draai
+  # dit terug naar enkele uren als je vaak kleine CSS-aanpassingen doet.
+  ExpiresByType text/css                  "access plus 7 days"
+  ExpiresByType application/javascript    "access plus 7 days"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+AddDefaultCharset UTF-8
+AddType application/manifest+json .webmanifest

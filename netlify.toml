@@ -36,6 +36,14 @@
   to = "/index.html"
   status = 404
 
+# Interne documentatie staat sinds kort wél in git (zodat het rollback-plan en
+# de DNS-back-up niet enkel op één laptop leven), maar hoort niet op het web:
+# het bevat infrastructuurdetails en de prijslijst-PDF van de klant.
+[[redirects]]
+  from = "/docs/*"
+  to = "/index.html"
+  status = 404
+
 [[headers]]
   for = "/*"
   [headers.values]
