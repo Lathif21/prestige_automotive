@@ -1,3 +1,6 @@
 _legacy-squarespace
 .claude
 docs
+prestige-config.php
+deploy/*.local.*
+.env

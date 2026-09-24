@@ -1,27 +1,27 @@
-/* Cloudflare Pages Function — POST /api/contact
-   ─────────────────────────────────────────────────────────────
-   LET OP: dit bestand draait nergens op dit moment. Dezelfde endpoint bestaat
-   in drie varianten:
-
-     netlify/functions/contact.mjs   Netlify  ← dit is wat live gaat
-     api/contact.php                 Combell (PHP)
-     functions/api/contact.js        dit bestand, Cloudflare Pages
-
-   Wijzig je er één, wijzig dan ook de andere — of gooi weg wat je niet meer
-   gebruikt.
+/* POST /api/contact — Netlify Function
    ─────────────────────────────────────────────────────────────
    Verstuurt het contactformulier van contact.html per e-mail via Resend.
 
-   Vereiste environment variables (Cloudflare Pages → Settings →
-   Environment variables). Zet ze als "Secret", niet als plain text:
+   Dit is de derde variant van dezelfde endpoint:
+     functions/api/contact.js    Cloudflare Pages Function
+     api/contact.php             Combell (Linux, PHP)
+     netlify/functions/contact.mjs   ← dit bestand, Netlify
+
+   Houd ze gelijk als je er één aanpast, of gooi weg wat je niet gebruikt.
+
+   De route /api/contact wordt in netlify.toml naar deze functie gestuurd,
+   zodat contact.html ongewijzigd blijft.
+
+   Vereiste environment variables (Netlify → Site configuration →
+   Environment variables):
 
      RESEND_API_KEY   API-sleutel van https://resend.com  (verplicht)
      CONTACT_TO       ontvanger, bv. Geoffrey@prestige-automotive.be
      CONTACT_FROM     afzender op een geverifieerd domein,
                       bv. "Prestige Automotive <website@prestige-automotive.be>"
 
-   CONTACT_TO en CONTACT_FROM hebben veilige defaults (zie onder), zodat een
-   preview-omgeving nooit per ongeluk naar de klant mailt.
+   De foutmeldingen hieronder zijn bewust Nederlands: bezoekers van
+   contact.html krijgen ze te zien.
    ───────────────────────────────────────────────────────────── */
 
 const DEFAULT_TO   = 'lathif.sihab-dewantoro@drpbuildlab.com';
@@ -30,7 +30,10 @@ const DEFAULT_FROM = 'Prestige Automotive <onboarding@resend.dev>';
 const json = (status, body) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff'
+    }
   });
 
 const esc = (v) =>
@@ -38,9 +41,15 @@ const esc = (v) =>
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export default async (request) => {
+  if (request.method !== 'POST') {
+    return new Response('Method Not Allowed', {
+      status: 405,
+      headers: { Allow: 'POST' }
+    });
+  }
 
+  // Het formulier stuurt FormData; JSON wordt ook aanvaard.
   let data;
   try {
     const ct = request.headers.get('content-type') || '';
@@ -57,13 +66,15 @@ export async function onRequestPost(context) {
   // Doe alsof het gelukt is — zo leert de bot niets.
   if (data.website) return json(200, { ok: true });
 
-  const voornaam   = (data.voornaam   || '').toString().trim();
-  const achternaam = (data.achternaam || '').toString().trim();
-  const email      = (data.email      || '').toString().trim();
-  const telefoon   = (data.telefoon   || '').toString().trim();
-  const service    = (data.service    || '').toString().trim();
-  const voertuig   = (data.voertuig   || '').toString().trim();
-  const bericht    = (data.bericht    || '').toString().trim();
+  const str = (v) => (v == null ? '' : String(v).trim());
+
+  const voornaam   = str(data.voornaam);
+  const achternaam = str(data.achternaam);
+  const email      = str(data.email);
+  const telefoon   = str(data.telefoon);
+  const service    = str(data.service);
+  const voertuig   = str(data.voertuig);
+  const bericht    = str(data.bericht);
 
   if (!voornaam || !achternaam || !email || !service || !bericht) {
     return json(400, { ok: false, error: 'Vul alle verplichte velden in.' });
@@ -75,8 +86,9 @@ export async function onRequestPost(context) {
     return json(400, { ok: false, error: 'Bericht is te lang.' });
   }
 
-  if (!env.RESEND_API_KEY) {
-    console.error('RESEND_API_KEY ontbreekt — e-mail niet verzonden');
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error('Resend-fout: RESEND_API_KEY ontbreekt — e-mail niet verzonden');
     return json(500, { ok: false, error: 'E-mail is niet geconfigureerd.' });
   }
 
@@ -106,21 +118,27 @@ export async function onRequestPost(context) {
     `Naam: ${naam}\nE-mail: ${email}\nTelefoon: ${telefoon || '—'}\n` +
     `Service: ${service}\nVoertuig: ${voertuig || '—'}\n\nBericht:\n${bericht}\n`;
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: env.CONTACT_FROM || DEFAULT_FROM,
-      to: [env.CONTACT_TO || DEFAULT_TO],
-      reply_to: email,
-      subject: `Website-aanvraag — ${naam} (${service})`,
-      html,
-      text
-    })
-  });
+  let res;
+  try {
+    res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: process.env.CONTACT_FROM || DEFAULT_FROM,
+        to: [process.env.CONTACT_TO || DEFAULT_TO],
+        reply_to: email,
+        subject: `Website-aanvraag — ${naam} (${service})`,
+        html,
+        text
+      })
+    });
+  } catch (err) {
+    console.error('Resend-fout (netwerk):', err);
+    return json(502, { ok: false, error: 'Verzenden is niet gelukt.' });
+  }
 
   if (!res.ok) {
     console.error('Resend-fout', res.status, await res.text());
@@ -128,15 +146,4 @@ export async function onRequestPost(context) {
   }
 
   return json(200, { ok: true });
-}
-
-// Expliciete methode-handlers: geen catch-all onRequest, want de volgorde
-// tussen onRequest en onRequestPost is niet gedocumenteerd en een catch-all
-// zou de POST hierboven kunnen overschaduwen.
-const methodNotAllowed = () =>
-  new Response('Method Not Allowed', { status: 405, headers: { Allow: 'POST' } });
-
-export const onRequestGet = methodNotAllowed;
-export const onRequestPut = methodNotAllowed;
-export const onRequestDelete = methodNotAllowed;
-export const onRequestPatch = methodNotAllowed;
+};

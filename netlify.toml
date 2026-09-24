@@ -1,0 +1,62 @@
+# Netlify-configuratie — Prestige Automotive
+# Zie docs/NETLIFY-DEPLOY.md.
+#
+# De site is platte HTML zonder build-stap: Netlify publiceert de repo-root
+# zoals hij is. Wat in .gitignore staat (_legacy-squarespace, docs, .claude)
+# zit niet in de repo en komt dus ook niet op Netlify terecht.
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+  # Geen build-commando: er valt niets te bouwen.
+  command = ""
+
+# ── Contactformulier ──
+# contact.html post naar /api/contact. Deze regel stuurt dat door naar de
+# Netlify Function, zodat de HTML identiek blijft aan de andere hostings.
+# status 200 = interne rewrite, geen redirect: de browser blijft op /api/contact.
+[[redirects]]
+  from = "/api/contact"
+  to = "/.netlify/functions/contact"
+  status = 200
+  force = true
+
+# De PHP-variant hoort alleen op Combell thuis. Netlify voert geen PHP uit en
+# zou de broncode als platte tekst serveren; dit blokkeert dat.
+[[redirects]]
+  from = "/api/*.php"
+  to = "/index.html"
+  status = 404
+
+# De deploy-scripts voor Combell horen niet op het web. Ze bevatten geen
+# wachtwoorden — die komen uit environment variables — maar er is geen reden
+# om ze te publiceren.
+[[redirects]]
+  from = "/deploy/*"
+  to = "/index.html"
+  status = 404
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+
+# Afbeeldingen mogen lang gecacht blijven; ze wijzigen zelden en hebben een
+# vaste bestandsnaam.
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# CSS en JS korter, zodat een aanpassing snel zichtbaar is.
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
