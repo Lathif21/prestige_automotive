@@ -1,0 +1,8 @@
+{
+  "name": "prestige-automotive",
+  "private": true,
+  "description": "Enkel voor de Netlify Functions. De site zelf heeft geen build-stap.",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.3"
+  }
+}

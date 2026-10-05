@@ -20,7 +20,7 @@ en verwijzen naar één gedeelde stylesheet en een paar losse scripts.
 │   ├── css/style.css      volledig design system (tokens, nav, footer, componenten)
 │   ├── js/
 │   │   ├── main.js               nav, scroll-reveals, lightbox, filters, accordion
-│   │   ├── instagram-feed.js     galerij-feed — FEED_URL moet nog ingevuld worden
+│   │   ├── instagram-feed.js     galerij-feed — leest /api/instagram
 │   │   ├── te-koop.js            leest auto's live uit Firestore
 │   │   ├── te-koop-beheer.js     login + toevoegen/bewerken/verwijderen
 │   │   └── firebase-config.js    projectgegevens voor Firestore
@@ -31,6 +31,16 @@ en verwijzen naar één gedeelde stylesheet en een paar losse scripts.
 ├── functions/api/contact.js   dezelfde endpoint als Cloudflare Pages Function.
 │                           Draait NIET op Combell; enkel bewaard voor het geval
 │                           de site terug naar Cloudflare gaat
+│
+├── netlify/
+│   ├── functions/contact.mjs          contactformulier op Netlify
+│   ├── functions/instagram.mjs        GET /api/instagram — serveert de feed
+│   ├── functions/instagram-connect.mjs  koppellink voor de klant: Instagram-
+│   │                                   login → token → opslag
+│   ├── functions/instagram-sync.mjs   dagelijks: Instagram-token vernieuwen
+│   │                                   en berichten ophalen
+│   └── lib/instagram.mjs              gedeelde logica van die twee
+├── package.json           enkel voor de functions (@netlify/blobs)
 │
 ├── .htaccess              Apache-config: HTTPS, /api/contact-routering, caching
 ├── deploy/
@@ -93,12 +103,13 @@ Inloggegevens komen uit de environment variables `COMBELL_FTP_HOST`,
   (https://www.instagram.com/_prestige_automotive/). De vraag over
   @carrez_customs is daarmee gesloten; alle 9 links in de 7 pagina's wijzen al
   naar het juiste account, er valt daar niets meer aan te wijzigen.
-- Instagram-feed zelf: **bewust uitgesteld tot na de deployment.**
-  `CONFIG.FEED_URL` in `assets/js/instagram-feed.js` blijft voorlopig leeg,
-  waardoor de vaste fotogalerij blijft staan — dat is de bedoelde fallback, geen
-  fout. Voor het koppelen van de Meta Graph API: zie
-  `docs/INSTAGRAM-FEED-SETUP.md` (voor de klant) en
-  `docs/INSTAGRAM-FEED-TECHNICAL.md` (opties en Graph API-details).
+- Instagram-feed: **gebouwd, wacht op het token.** Draait gratis op Netlify
+  (scheduled function + Netlify Blobs), geen Behold of Firebase nodig. Live
+  zodra de klant de koppellink `/api/instagram/connect` doorloopt — eerst de
+  Meta-app en twee environment variables instellen, zie
+  `docs/INSTAGRAM-FEED-TECHNICAL.md` §6. De klant moet enkel het account
+  professioneel maken en op Toestaan tikken (`docs/INSTAGRAM-FEED-SETUP.nl.md`).
+  Tot dan toont de galerij de vaste foto's — de bedoelde fallback, geen fout.
 - Het contactformulier verstuurt pas e-mail zodra `RESEND_API_KEY`, `CONTACT_TO`
   en `CONTACT_FROM` ingesteld zijn. Op Netlify zijn dat environment variables
   (zie `docs/NETLIFY-DEPLOY.md`), op Combell staat het in `prestige-config.php`

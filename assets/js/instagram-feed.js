@@ -1,25 +1,23 @@
 /* Prestige Automotive — Instagram feed
    ─────────────────────────────────────────────────────────────
-   Deze site is statisch (geen server), dus de Instagram Graph API
-   kan hier niet rechtstreeks gebruikt worden: die vereist een
-   access token, en een token in de broncode is publiek zichtbaar
-   én verloopt om de 60 dagen.
+   Leest de recentste Instagram-berichten van @_prestige_automotive via
+   /api/instagram. Dat is een Netlify Function die een kopie serveert
+   uit Netlify Blobs; een dagelijkse scheduled function houdt die kopie
+   en het Instagram-token up-to-date (zie netlify/functions/ en
+   docs/INSTAGRAM-FEED-TECHNICAL.md). Het token komt dus nooit in de
+   browser.
 
-   Daarom halen we de feed op via een hosted feed-service die een
-   publieke, CORS-vriendelijke JSON-URL geeft (Behold.so heeft een
-   gratis plan). De eigenaar koppelt daar éénmalig het Instagram-
-   account @_prestige_automotive, kopieert de feed-URL en plakt die
-   hieronder. Vanaf dan ververst de galerij zichzelf automatisch.
-
-   Zolang FEED_URL leeg is, blijft de bestaande vaste fotogalerij
-   staan — de pagina breekt dus nooit.
+   Werkt de feed niet — nog niets gesynchroniseerd, Netlify of Instagram
+   onbereikbaar, of de site draait ergens zonder die functions (lokaal,
+   Combell) — dan blijft de bestaande vaste fotogalerij staan. De pagina
+   breekt dus nooit.
    ───────────────────────────────────────────────────────────── */
 (function () {
   'use strict';
 
   var CONFIG = {
-    // Plak hier de JSON feed-URL (bv. https://feeds.behold.so/XXXXXXXXXXXX)
-    FEED_URL: '',
+    // Leeg laten schakelt de feed uit; de vaste galerij blijft dan staan.
+    FEED_URL: '/api/instagram',
     PROFILE_URL: 'https://www.instagram.com/_prestige_automotive',
     LIMIT: 15
   };
@@ -37,7 +35,7 @@
       return r.json();
     })
     .then(function (data) {
-      // Behold levert of een array, of { posts: [...] }
+      // /api/instagram geeft { posts: [...] }; een kale array mag ook
       var posts = Array.isArray(data) ? data : (data.posts || []);
       if (!posts.length) throw new Error('lege feed');
 

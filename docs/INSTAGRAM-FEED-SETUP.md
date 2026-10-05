@@ -3,134 +3,67 @@
 For: the owner of the Prestige Automotive Instagram account.
 Goal: have the gallery page automatically show the most recent Instagram posts.
 
-You don't need to write any code. Everything below happens in the Instagram app
-and on Meta's website. At the end you hand one piece of information to your web
-developer.
-
----
-
-## Read this first
-
-**1. This only works with a professional account.**
-A private account cannot be read through the API. Switching to Business or
-Creator is free and changes nothing about your posts or followers.
-
-**2. Access expires every 60 days.**
-Meta does not issue permanent keys. A key is valid for 60 days and has to be
-renewed before then. If it isn't, the feed stops and the whole procedure has to
-be repeated. Agree up front with your web developer on who handles that renewal
-— see **Step 6**.
-
-**3. There is a simpler alternative.**
-A feed service such as Behold takes over steps 2 through 6 entirely, including
-renewing the key. For most businesses that is the better choice. See
-**Alternative** at the bottom.
+You don't need to write any code, pay for anything, or hand over any keys or
+passwords. There are only two things that only you can do, together about five
+minutes. Your web developer handles the rest.
 
 ---
 
 ## Step 1 — Switch Instagram to a professional account
 
+A private account cannot be read automatically. Switching is free and changes
+nothing about your posts or followers.
+
 1. Open the Instagram app → your profile → menu (☰) → **Settings**.
 2. Go to **Account type and tools** → **Switch to professional account**.
 3. Choose **Business** and complete the steps.
 
-Then confirm which account is actually being used. The website currently points
-to **@_prestige_automotive**. The old website pointed to a different account
-(@carrez_customs) — confirm with your web developer which of the two should feed
-the gallery.
+Do this on **@_prestige_automotive**, the account the website links to.
 
-## Step 2 — Create a Meta app
+## Step 2 — Approve the connection (2 minutes)
 
-1. Go to https://developers.facebook.com and sign in with your Facebook account.
-2. Click **My Apps** at the top right → **Create App**.
-3. Give the app a name (e.g. `Prestige Automotive Website`) and enter your email address.
-4. Choose **Other** as the app type, then **Business**.
+Your web developer sends you this link:
 
-## Step 3 — Add Instagram to the app
+**https://prestige-automotive.be/api/instagram/connect**
 
-1. In the app, click **Add Product** and choose **Instagram**.
-2. Select **Instagram API with Instagram Login** — *not* the Facebook Login
-   variant, which additionally requires a linked Facebook Page.
-3. Note down the **Instagram App ID** and the **Instagram App Secret**. Treat
-   that secret like a password: never send it by email or WhatsApp.
+1. Open it on your own phone or computer.
+2. Instagram's login page opens. Log in as **@_prestige_automotive**.
+   This is Instagram's own page (instagram.com). The website and your web
+   developer never see your password.
+3. Instagram asks whether the app may access your profile and posts. Tap
+   **Allow**.
+4. You land on a page saying **"Gelukt — Instagram is gekoppeld"**. That's it.
 
-## Step 4 — Grant the app access to your account
+That permission only allows *reading*. The website cannot post, delete
+anything, or read your messages (DMs).
 
-1. Go to **Instagram → API setup with Instagram login**.
-2. Under **Business login settings**, add a valid redirect URL (your web
-   developer will give you this).
-3. Complete the login flow and grant the **`instagram_business_basic`**
-   permission. Nothing more is needed for a gallery — that permission only
-   allows *reading*, not posting or replying.
+**If something else appears:**
 
-## Step 5 — Exchange the key for a long-lived one
-
-The key you receive in step 4 is valid for only **1 hour** and can be used once.
-It has to be exchanged for a **60-day** key:
-
-```
-GET https://graph.instagram.com/access_token
-      ?grant_type=ig_exchange_token
-      &client_secret=YOUR_APP_SECRET
-      &access_token=THE_ONE_HOUR_KEY
-```
-
-This is a technical step — have your web developer run it, or paste the request
-into the Graph API Explorer in the Meta dashboard.
-
-## Step 6 — Agree on the renewal
-
-The 60-day key has to be renewed before day 60:
-
-```
-GET https://graph.instagram.com/refresh_access_token
-      ?grant_type=ig_refresh_token
-      &access_token=THE_CURRENT_KEY
-```
-
-Conditions: the key is at least 24 hours old and has not yet expired. **A key
-that has not been renewed for 60 days is permanently dead**, and you start again
-from step 4.
-
-This is why this approach carries ongoing maintenance. Decide who owns it:
-
-- **your web developer**, with an automated job that runs monthly, or
-- **a feed service**, which takes it over completely (see below).
-
-Either way, put a reminder in the calendar for day 45 as long as it isn't
-automated.
-
----
-
-## Alternative: a feed service (recommended)
-
-Services such as **Behold** (https://behold.so), LightWidget or SnapWidget
-handle steps 2 through 6 for you, including renewing the key. You connect your
-Instagram account once and get a permanent link to your feed.
-
-1. Create an account at https://behold.so.
-
-   Check the plan before you commit. The free plan is limited to **6 posts per
-   feed**, **1,200 page views per month**, and shows a **Behold logo on hover**.
-   For a business site that usually means the $10/month Starter plan; confirm
-   the current limits at https://behold.so/pricing/.
-2. Connect the Prestige Automotive Instagram account.
-3. Create a feed and copy the **feed URL**.
-4. Send that URL to your web developer.
-
-You then have no app secret, no key and no expiry date to track. The website is
-already prepared for this: only one line needs to be filled in.
-
----
-
-## What you need to hand over
-
-Depending on the route chosen:
-
-| Route | What you hand over |
+| You see | What to do |
 |---|---|
-| Feed service (recommended) | The feed URL |
-| Graph API | App ID, App Secret and the long-lived key — via a password manager, not by email |
+| *"Je was ingelogd als @…"* | You were logged in to a different account. Open the link again and log in as @_prestige_automotive. |
+| *"De link is verlopen"* | More than 30 minutes passed. Just open the link again. |
+| *"Niet gekoppeld"* | You didn't tap Allow. Nothing changed; open the link again if you want to connect. |
+| Instagram says the app isn't available to you | Your web developer sends you an invitation first. Accept it in the Instagram app under **Settings → Website permissions → Apps and websites**, then open the link again. |
+| anything else | Try again in a few minutes. If it still fails, let your web developer know. |
 
-Until one of the two is filled in, the gallery keeps showing the current fixed
-photos. The page therefore always works.
+---
+
+## Afterwards
+
+From then on the gallery shows your latest posts by itself. New posts appear
+within a day. The connection renews itself automatically, so there is nothing
+more for you to do.
+
+**When do you need to log in again?** Only if the connection is broken, for
+example if you:
+
+- change your Instagram password,
+- remove the website's access in Instagram, or
+- switch the account back to a private account.
+
+Your web developer is notified automatically and will send you the link again
+(step 2).
+
+**While the connection isn't working**, the gallery shows the fixed photos that
+are there now. The page therefore always works.

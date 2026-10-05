@@ -3,3 +3,4 @@ _legacy-squarespace
 prestige-config.php
 deploy/*.local.*
 .env
+node_modules
