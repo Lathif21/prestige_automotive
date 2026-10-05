@@ -21,12 +21,37 @@
   status = 200
   force = true
 
+# ── Instagram-feed ──
+# /api/instagram/connect is de link die de klant krijgt om Instagram te
+# koppelen; Instagram stuurt daar ook naar terug na het goedkeuren.
+[[redirects]]
+  from = "/api/instagram/connect"
+  to = "/.netlify/functions/instagram-connect"
+  status = 200
+  force = true
+
+# galerij.html leest /api/instagram. De berichten komen uit Netlify Blobs,
+# dagelijks gevuld door de scheduled function instagram-sync.
+[[redirects]]
+  from = "/api/instagram"
+  to = "/.netlify/functions/instagram"
+  status = 200
+  force = true
+
+# ── Bestanden die in de repo staan maar niet op het web horen ──
+# Omdat publish = "." wordt álles in de repo-root mee gepubliceerd.
+# force = true is hier essentieel: zonder force slaat Netlify een regel over
+# zodra er op dat pad een echt bestand bestaat — en dat is hier precies het
+# geval. (Tot 2026-10 ontbrak force en waren deze bestanden wél publiek.)
+
 # De PHP-variant hoort alleen op Combell thuis. Netlify voert geen PHP uit en
 # zou de broncode als platte tekst serveren; dit blokkeert dat.
+# (Netlify kent geen wildcard midden in een pad, dus de bestandsnaam voluit.)
 [[redirects]]
-  from = "/api/*.php"
+  from = "/api/contact.php"
   to = "/index.html"
   status = 404
+  force = true
 
 # De deploy-scripts voor Combell horen niet op het web. Ze bevatten geen
 # wachtwoorden — die komen uit environment variables — maar er is geen reden
@@ -35,6 +60,7 @@
   from = "/deploy/*"
   to = "/index.html"
   status = 404
+  force = true
 
 # Interne documentatie staat sinds kort wél in git (zodat het rollback-plan en
 # de DNS-back-up niet enkel op één laptop leven), maar hoort niet op het web:
@@ -43,6 +69,46 @@
   from = "/docs/*"
   to = "/index.html"
   status = 404
+  force = true
+
+# Broncode van de functions en hun npm-afhankelijkheden. Netlify installeert
+# node_modules tijdens de build in de repo-root, dus ook die zou anders
+# gepubliceerd worden.
+[[redirects]]
+  from = "/netlify/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/functions/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/index.html"
+  status = 404
+  force = true
 
 [[headers]]
   for = "/*"
