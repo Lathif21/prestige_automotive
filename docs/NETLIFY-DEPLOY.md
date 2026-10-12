@@ -292,13 +292,27 @@ Nothing breaks, and nothing is wasted:
 
 ## Spam protection (Cloudflare Turnstile)
 
-The form has two layers:
+The form has four layers:
 
-1. **Honeypot** — the hidden `website` field. Naive bots fill it in; the
+1. **Netlify rate limit**: at most 5 requests per 3 minutes per IP, set in
+   `export const config` in `netlify/functions/contact.mjs`. Netlify answers
+   `429` before the function even runs. 180 s is the longest window Netlify
+   allows. The rule shows up in the deploy log under post-processing.
+2. **Honeypot**: the hidden `website` field. Naive bots fill it in. The
    function then answers "ok" without sending anything.
-2. **Cloudflare Turnstile** — a free, usually invisible challenge. The widget
-   in `contact.html` adds a `cf-turnstile-response` token to the form; the
+3. **Cloudflare Turnstile**: a free, usually invisible challenge. The widget
+   in `contact.html` adds a `cf-turnstile-response` token to the form. The
    function checks it with Cloudflare before sending the email.
+4. **Hourly cap**: at most 3 *sent* messages per hour per IP, counted in
+   Netlify Blobs (store `contact-rate`, keyed by a SHA-256 hash of the IP, so
+   no readable IPs are stored). Validation errors don't count. If Blobs is
+   unavailable, the message goes through.
+
+The browser also keeps the submit button locked for a minute after a successful
+send. That's only a convenience; the limits above are what count.
+
+Because the rate limit needs the function to own its path, `/api/contact` is
+no longer a redirect in `netlify.toml`. The function declares the path itself.
 
 Turnstile does **not** need the site or DNS to be on Cloudflare. It only needs a
 free Cloudflare account. DNS stays at Combell, hosting stays on Netlify.

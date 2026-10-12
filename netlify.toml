@@ -12,14 +12,9 @@
   command = ""
 
 # ── Contactformulier ──
-# contact.html post naar /api/contact. Deze regel stuurt dat door naar de
-# Netlify Function, zodat de HTML identiek blijft aan de andere hostings.
-# status 200 = interne rewrite, geen redirect: de browser blijft op /api/contact.
-[[redirects]]
-  from = "/api/contact"
-  to = "/.netlify/functions/contact"
-  status = 200
-  force = true
+# contact.html post naar /api/contact. Die route staat niet hier maar in de
+# functie zelf (export const config in netlify/functions/contact.mjs): Netlify's
+# rate limiting werkt enkel zo.
 
 # ── Instagram-feed ──
 # /api/instagram/connect is de link die de klant krijgt om Instagram te

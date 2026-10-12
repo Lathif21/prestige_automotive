@@ -235,7 +235,11 @@
           if (!res.r.ok || !res.b.ok) {
             // Markeren als afkomstig van de server: die meldingen zijn Nederlands
             // en mogen aan de bezoeker getoond worden. Netwerkfouten niet.
-            var e = new Error(res.b.error || 'Verzenden is niet gelukt.');
+            // Een 429 van Netlify's rate limit zelf heeft geen JSON-body.
+            var fallback = res.r.status === 429
+              ? 'U heeft net al een bericht gestuurd. Probeer het later opnieuw.'
+              : 'Verzenden is niet gelukt.';
+            var e = new Error(res.b.error || fallback);
             e.fromServer = true;
             throw e;
           }
@@ -243,11 +247,15 @@
           show('Bedankt! We nemen zo snel mogelijk contact met u op.', true);
           form.reset();
           resetCaptcha();
+          // Knop een minuut op slot, tegen dubbel of herhaald versturen. Dit is
+          // enkel gemak — de echte limiet zit op de server.
+          setTimeout(function () {
+            if (status) status.classList.remove('show');
+          }, 6000);
           setTimeout(function () {
             btn.textContent = original;
             btn.disabled = false;
-            if (status) status.classList.remove('show');
-          }, 6000);
+          }, 60000);
         })
         .catch(function (err) {
           resetCaptcha();

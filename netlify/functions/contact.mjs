@@ -9,8 +9,16 @@
 
    Houd ze gelijk als je er één aanpast, of gooi weg wat je niet gebruikt.
 
-   De route /api/contact wordt in netlify.toml naar deze functie gestuurd,
+   De functie draait rechtstreeks op /api/contact (zie config onderaan),
    zodat contact.html ongewijzigd blijft.
+
+   Spambescherming, in deze volgorde:
+     1. Netlify-rate limit (config onderaan): max. 5 aanvragen per 3 minuten
+        per IP. Netlify weigert die met 429 nog vóór deze functie draait.
+     2. Honeypot (veld website).
+     3. Cloudflare Turnstile (veld cf-turnstile-response).
+     4. Max. 3 verzonden berichten per uur per IP, bijgehouden in Netlify
+        Blobs. Netlify's eigen limiet kent geen venster langer dan 3 minuten.
 
    Vereiste environment variables (Netlify → Site configuration →
    Environment variables):
@@ -27,8 +35,15 @@
    contact.html krijgen ze te zien.
    ───────────────────────────────────────────────────────────── */
 
+import { createHash } from 'node:crypto';
+import { getStore } from '@netlify/blobs';
+
 const DEFAULT_TO   = 'lathif.sihab-dewantoro@drpbuildlab.com';
 const DEFAULT_FROM = 'Prestige Automotive <onboarding@resend.dev>';
+
+const HOURLY_LIMIT = 3;
+const HOUR = 60 * 60 * 1000;
+const TOO_MANY = 'U heeft net al een bericht gestuurd. Probeer het later opnieuw.';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), {
@@ -62,9 +77,9 @@ async function turnstileOk(token, ip) {
   try {
     const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
-      // Kort houden: samen met de 8 s voor Resend moet alles binnen Netlify's
-      // limiet van 10 s blijven.
-      signal: AbortSignal.timeout(1500),
+      // Kort houden: samen met de uurlimiet (0,7 s) en Resend (8 s) moet alles
+      // binnen Netlify's limiet van 10 s blijven.
+      signal: AbortSignal.timeout(1200),
       body
     });
     const out = await res.json();
@@ -72,6 +87,32 @@ async function turnstileOk(token, ip) {
     return out.success === true;
   } catch (err) {
     console.error('Turnstile onbereikbaar, aanvraag doorgelaten:', err?.name || err);
+    return true;
+  }
+}
+
+/* Uurlimiet per bezoeker. Het IP wordt gehasht opgeslagen, nooit leesbaar.
+   Telt een bericht mee en geeft false terug als het uurquotum op is.
+   Bij een storing van Blobs (of na 0,7 s) laten we de aanvraag door: Turnstile
+   en Netlify's rate limit blijven dan gewoon actief. */
+async function underHourlyLimit(ip) {
+  if (!ip) return true;
+  const key = createHash('sha256').update('prestige-contact:' + ip).digest('hex');
+
+  const check = (async () => {
+    const store = getStore('contact-rate');
+    const now = Date.now();
+    const recent = ((await store.get(key, { type: 'json' })) || []).filter((t) => now - t < HOUR);
+    if (recent.length >= HOURLY_LIMIT) return false;
+    await store.setJSON(key, [...recent, now]);
+    return true;
+  })();
+  const timeout = new Promise((resolve) => setTimeout(() => resolve(true), 700));
+
+  try {
+    return await Promise.race([check, timeout]);
+  } catch (err) {
+    console.error('Uurlimiet niet beschikbaar, aanvraag doorgelaten:', err?.name || err);
     return true;
   }
 }
@@ -125,6 +166,11 @@ export default async (request, context) => {
   }
   if (bericht.length > 5000) {
     return json(400, { ok: false, error: 'Bericht is te lang.' });
+  }
+
+  // Pas hier tellen: een tikfout of mislukte controle kost geen poging.
+  if (!(await underHourlyLimit(context?.ip))) {
+    return json(429, { ok: false, error: TOO_MANY });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -196,4 +242,15 @@ export default async (request, context) => {
   }
 
   return json(200, { ok: true });
+};
+
+// Netlify-rate limit. Werkt enkel met een eigen path; daarom staat de route
+// niet meer in netlify.toml. Langer dan 180 s kan Netlify niet.
+export const config = {
+  path: '/api/contact',
+  rateLimit: {
+    windowLimit: 5,
+    windowSize: 180,
+    aggregateBy: ['ip', 'domain']
+  }
 };
