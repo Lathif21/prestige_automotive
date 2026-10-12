@@ -13,6 +13,8 @@
      CONTACT_TO       ontvanger, bv. Geoffrey@prestige-automotive.be
      CONTACT_FROM     afzender op een geverifieerd domein,
                       bv. "Prestige Automotive <website@prestige-automotive.be>"
+     TURNSTILE_SECRET_KEY  geheime sleutel van de Cloudflare Turnstile-widget.
+                      Leeg = Turnstile wordt niet gecontroleerd.
    ───────────────────────────────────────────────────────────── */
 
 declare(strict_types=1);
@@ -41,7 +43,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
    (de normale Combell-opzet), en de webroot zelf als noodoplossing. */
 function load_config(): array {
     $cfg = [];
-    foreach (['RESEND_API_KEY', 'CONTACT_TO', 'CONTACT_FROM'] as $key) {
+    foreach (['RESEND_API_KEY', 'CONTACT_TO', 'CONTACT_FROM', 'TURNSTILE_SECRET_KEY'] as $key) {
         $v = getenv($key);
         if (is_string($v) && $v !== '') $cfg[$key] = $v;
     }
@@ -85,6 +87,41 @@ function field(array $d, string $k): string {
 // Doe alsof het gelukt is — zo leert de bot niets.
 if (field($data, 'website') !== '') {
     respond(200, ['ok' => true]);
+}
+
+/* Cloudflare Turnstile — zie netlify/functions/contact.mjs voor de uitleg.
+   Fail-open als Cloudflare onbereikbaar is. */
+function turnstile_ok(string $secret, string $token): bool {
+    if ($secret === '') return true;
+    if ($token === '') return false;
+    // Zonder cURL faalt de Resend-stap verderop toch met een nette melding.
+    if (!function_exists('curl_init')) return true;
+
+    $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query([
+            'secret'   => $secret,
+            'response' => $token,
+            'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+        ]),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 5,
+        CURLOPT_CONNECTTIMEOUT => 3,
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    if ($response === false) {
+        error_log('Turnstile onbereikbaar, aanvraag doorgelaten');
+        return true;
+    }
+    $out = json_decode((string) $response, true);
+    return is_array($out) && ($out['success'] ?? false) === true;
+}
+
+if (!turnstile_ok($config['TURNSTILE_SECRET_KEY'] ?? '', field($data, 'cf-turnstile-response'))) {
+    respond(400, ['ok' => false, 'error' => 'De beveiligingscontrole is mislukt. Probeer het opnieuw.']);
 }
 
 $voornaam   = field($data, 'voornaam');

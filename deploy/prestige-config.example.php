@@ -24,4 +24,8 @@ return [
     // Afzender. Het domein moet geverifieerd zijn bij Resend, anders weigert
     // Resend de mail of belandt ze in spam.
     'CONTACT_FROM'   => 'Prestige Automotive <website@prestige-automotive.be>',
+
+    // Geheime sleutel van de Cloudflare Turnstile-widget (spambescherming).
+    // Leeg = Turnstile wordt niet gecontroleerd, enkel de honeypot.
+    'TURNSTILE_SECRET_KEY' => '',
 ];

@@ -99,6 +99,10 @@ Inloggegevens komen uit de environment variables `COMBELL_FTP_HOST`,
 
 ## Nog openstaand
 
+- **Spambescherming contactformulier: wacht op de Turnstile-sleutels.** Code
+  staat klaar (honeypot + Cloudflare Turnstile). Nog te doen: widget aanmaken
+  in Cloudflare, site key in `contact.html`, `TURNSTILE_SECRET_KEY` op
+  Netlify — in die volgorde. Zie `docs/NETLIFY-DEPLOY.md`, "Spam protection".
 - **Instagram-account: BESLIST — `@_prestige_automotive`**
   (https://www.instagram.com/_prestige_automotive/). De vraag over
   @carrez_customs is daarmee gesloten; alle 9 links in de 7 pagina's wijzen al

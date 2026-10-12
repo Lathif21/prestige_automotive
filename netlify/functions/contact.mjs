@@ -19,6 +19,9 @@
      CONTACT_TO       ontvanger, bv. Geoffrey@prestige-automotive.be
      CONTACT_FROM     afzender op een geverifieerd domein,
                       bv. "Prestige Automotive <website@prestige-automotive.be>"
+     TURNSTILE_SECRET_KEY  geheime sleutel van de Cloudflare Turnstile-widget.
+                      Zolang die ontbreekt, wordt Turnstile niet gecontroleerd
+                      en houdt enkel de honeypot bots tegen.
 
    De foutmeldingen hieronder zijn bewust Nederlands: bezoekers van
    contact.html krijgen ze te zien.
@@ -41,7 +44,39 @@ const esc = (v) =>
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-export default async (request) => {
+/* Cloudflare Turnstile — controleert het token dat de widget op contact.html
+   in het formulier zet (veld cf-turnstile-response). Een token is eenmalig en
+   5 minuten geldig.
+
+   Geeft true terug als de aanvraag door mag. Is Cloudflare zelf onbereikbaar,
+   dan laten we de aanvraag door (fail-open): een bot kan die storing niet
+   uitlokken, en een gemiste klant weegt zwaarder dan een enkel spambericht. */
+async function turnstileOk(token, ip) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return true;
+  if (!token) return false;
+
+  const body = new URLSearchParams({ secret, response: token });
+  if (ip) body.set('remoteip', ip);
+
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      // Kort houden: samen met de 8 s voor Resend moet alles binnen Netlify's
+      // limiet van 10 s blijven.
+      signal: AbortSignal.timeout(1500),
+      body
+    });
+    const out = await res.json();
+    if (!out.success) console.warn('Turnstile geweigerd:', out['error-codes']);
+    return out.success === true;
+  } catch (err) {
+    console.error('Turnstile onbereikbaar, aanvraag doorgelaten:', err?.name || err);
+    return true;
+  }
+}
+
+export default async (request, context) => {
   if (request.method !== 'POST') {
     return new Response('Method Not Allowed', {
       status: 405,
@@ -65,6 +100,12 @@ export default async (request) => {
   // Honeypot: bots vullen dit verborgen veld in, mensen zien het niet.
   // Doe alsof het gelukt is — zo leert de bot niets.
   if (data.website) return json(200, { ok: true });
+
+  // Turnstile: hier wél een echte foutmelding. Een mens kan dit oplossen door
+  // de controle opnieuw te doen; een bot zonder token leert er niets uit.
+  if (!(await turnstileOk(data['cf-turnstile-response'], context?.ip))) {
+    return json(400, { ok: false, error: 'De beveiligingscontrole is mislukt. Probeer het opnieuw.' });
+  }
 
   const str = (v) => (v == null ? '' : String(v).trim());
 

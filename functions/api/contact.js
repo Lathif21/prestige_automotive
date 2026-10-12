@@ -19,6 +19,8 @@
      CONTACT_TO       ontvanger, bv. Geoffrey@prestige-automotive.be
      CONTACT_FROM     afzender op een geverifieerd domein,
                       bv. "Prestige Automotive <website@prestige-automotive.be>"
+     TURNSTILE_SECRET_KEY  geheime sleutel van de Cloudflare Turnstile-widget.
+                      Zolang die ontbreekt, wordt Turnstile niet gecontroleerd.
 
    CONTACT_TO en CONTACT_FROM hebben veilige defaults (zie onder), zodat een
    preview-omgeving nooit per ongeluk naar de klant mailt.
@@ -38,6 +40,26 @@ const esc = (v) =>
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
+/* Cloudflare Turnstile — zie netlify/functions/contact.mjs voor de uitleg.
+   Fail-open als Cloudflare onbereikbaar is. */
+async function turnstileOk(env, token, ip) {
+  if (!env.TURNSTILE_SECRET_KEY) return true;
+  if (!token) return false;
+  const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY, response: token });
+  if (ip) body.set('remoteip', ip);
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      signal: AbortSignal.timeout(3000),
+      body
+    });
+    const out = await res.json();
+    return out.success === true;
+  } catch {
+    return true;
+  }
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -56,6 +78,11 @@ export async function onRequestPost(context) {
   // Honeypot: bots vullen dit verborgen veld in, mensen zien het niet.
   // Doe alsof het gelukt is — zo leert de bot niets.
   if (data.website) return json(200, { ok: true });
+
+  const ip = request.headers.get('CF-Connecting-IP');
+  if (!(await turnstileOk(env, data['cf-turnstile-response'], ip))) {
+    return json(400, { ok: false, error: 'De beveiligingscontrole is mislukt. Probeer het opnieuw.' });
+  }
 
   const voornaam   = (data.voornaam   || '').toString().trim();
   const achternaam = (data.achternaam || '').toString().trim();

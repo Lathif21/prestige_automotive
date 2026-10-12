@@ -207,6 +207,20 @@
         return;
       }
 
+      // Turnstile: zolang de widget zijn controle niet af heeft, is het token
+      // leeg. Laadt het script niet (bv. door een adblocker), dan sturen we
+      // gewoon door en beslist de server.
+      var captcha = form.querySelector('.cf-turnstile');
+      var token = form.querySelector('[name="cf-turnstile-response"]');
+      if (captcha && window.turnstile && token && !token.value) {
+        show('Even geduld — de beveiligingscontrole is nog bezig. Probeer het zo meteen opnieuw.', false);
+        return;
+      }
+      // Een token is eenmalig: na elke poging een nieuw aanvragen.
+      function resetCaptcha() {
+        if (captcha && window.turnstile) window.turnstile.reset(captcha);
+      }
+
       btn.textContent = 'Verzenden…';
       btn.disabled = true;
       if (status) { status.classList.remove('show'); }
@@ -228,6 +242,7 @@
           btn.textContent = 'Bericht verstuurd ✓';
           show('Bedankt! We nemen zo snel mogelijk contact met u op.', true);
           form.reset();
+          resetCaptcha();
           setTimeout(function () {
             btn.textContent = original;
             btn.disabled = false;
@@ -235,6 +250,7 @@
           }, 6000);
         })
         .catch(function (err) {
+          resetCaptcha();
           btn.textContent = original;
           btn.disabled = false;
           // Een netwerkfout geeft browserteksten als "Load failed" (Safari) of

@@ -290,6 +290,53 @@ Nothing breaks, and nothing is wasted:
 
 ---
 
+## Spam protection (Cloudflare Turnstile)
+
+The form has two layers:
+
+1. **Honeypot** — the hidden `website` field. Naive bots fill it in; the
+   function then answers "ok" without sending anything.
+2. **Cloudflare Turnstile** — a free, usually invisible challenge. The widget
+   in `contact.html` adds a `cf-turnstile-response` token to the form; the
+   function checks it with Cloudflare before sending the email.
+
+Turnstile does **not** need the site or DNS to be on Cloudflare. It only needs a
+free Cloudflare account. DNS stays at Combell, hosting stays on Netlify.
+
+### Setting it up (once)
+
+1. Cloudflare dashboard → **Turnstile** → **Add widget**.
+   - Name: `Prestige Automotive contactformulier`
+   - Hostnames: `prestige-automotive.be`, `prestige-automotive-v1.netlify.app`
+     (and `localhost` if you want to test locally)
+   - Widget mode: **Managed**
+2. Copy the **site key** into `contact.html`, replacing the test key
+   `1x00000000000000000000AA` in `data-sitekey`. The site key is public; it
+   belongs in the HTML.
+3. Commit and push. The widget now shows and sends tokens, but the function does
+   not check them yet. Nothing can break at this stage.
+4. Netlify → Environment variables → add `TURNSTILE_SECRET_KEY` with the
+   **secret key** (mark it secret) → **redeploy**. From now on submissions
+   without a valid token are rejected.
+
+> **Order matters.** If `TURNSTILE_SECRET_KEY` is set while `contact.html` still
+> has the test site key, every real submission fails. Do steps 2–3 before
+> step 4, and test the form once afterwards.
+
+### Behaviour
+
+| Situation | Result |
+|---|---|
+| `TURNSTILE_SECRET_KEY` not set | Turnstile is skipped; only the honeypot runs |
+| Token missing or invalid | `400` *"De beveiligingscontrole is mislukt."* |
+| Cloudflare unreachable (timeout 1.5 s) | Submission is let through and logged; a bot cannot trigger this, and a lost customer costs more than one spam message |
+| Turnstile script blocked by an adblocker | The browser submits without a token; the server rejects it and the visitor is told to phone or email |
+
+On Combell the same secret goes in `prestige-config.php` as
+`TURNSTILE_SECRET_KEY`; on Cloudflare Pages as an environment variable.
+
+---
+
 ## Publishing changes later
 
 ```bash

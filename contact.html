@@ -299,6 +299,14 @@
               </label>
             </div>
 
+            <!-- Cloudflare Turnstile (spambescherming). De widget zet zelf een
+                 verborgen veld cf-turnstile-response in het formulier, dat de
+                 server bij Cloudflare controleert.
+                 1x00000000000000000000AA is Cloudflare's TEST-sleutel (slaagt
+                 altijd). Vervang door de echte site key vóór het live gaat —
+                 zie docs/NETLIFY-DEPLOY.md, "Spam protection". -->
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAFUXrp2J1rBgXuuX" data-language="nl" data-theme="light" data-size="flexible" style="margin-top:24px;"></div>
+
             <button type="submit" class="btn btn--primary" style="width:100%;margin-top:28px;font-size:16px;padding:18px;">
               Verstuur Bericht
             </button>
@@ -407,6 +415,7 @@
   <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
 </button>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
