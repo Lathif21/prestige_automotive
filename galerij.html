@@ -12,25 +12,6 @@
   <meta name="description" content="Bekijk onze voor- en na-resultaten. Exterieur detailing, paint correction, interieur reiniging en keramische coating door Prestige Automotive.">
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
-    /* ── Gallery filters ── */
-    .gal-filters {
-      display:flex; flex-wrap:wrap; gap:10px;
-      justify-content:center; margin-bottom:48px;
-    }
-    .gal-filter {
-      padding:10px 24px; border-radius:var(--r-pill);
-      border:1px solid var(--border); color:var(--muted);
-      font-family:var(--display); font-size:13px; font-weight:700;
-      letter-spacing:.1em; text-transform:uppercase;
-      cursor:pointer; transition:all var(--t-sm) var(--ease-out);
-      background:transparent;
-    }
-    .gal-filter.active,
-    .gal-filter:hover {
-      border-color:var(--green); color:var(--green);
-      background:var(--green-dim);
-    }
-
     /* ── Before/After strip ── */
     .ba-section { padding:120px 0; background:var(--surface-lo); }
     .ba-grid {
@@ -168,22 +149,6 @@
 <!-- ── GALLERY GRID ── -->
 <section class="section">
   <div class="container">
-
-    <div class="section-header rev">
-      <p class="eyebrow">Ons werk</p>
-      <h2 class="section-title">De <em>Prestige</em> Behandeling</h2>
-      <p class="section-sub">Van compacte stadsauto tot exclusieve sportwagen — elk voertuig krijgt de maximale aandacht en zorg die het verdient.</p>
-    </div>
-
-
-    <!-- Filters -->
-    <div class="gal-filters rev">
-      <button class="gal-filter active" data-filter="all">Alles</button>
-      <button class="gal-filter" data-filter="exterieur">Exterieur</button>
-      <button class="gal-filter" data-filter="interieur">Interieur</button>
-      <button class="gal-filter" data-filter="coating">Coating</button>
-      <button class="gal-filter" data-filter="correction">Paint Correction</button>
-    </div>
 
     <!-- Instagram feed (gevuld door instagram-feed.js) -->
     <div class="ig-head rev">
@@ -361,26 +326,5 @@
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/instagram-feed.js"></script>
-<script>
-  // Gallery filter
-  document.querySelectorAll('.gal-filter').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.gal-filter').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      var filter = btn.dataset.filter;
-      document.querySelectorAll('.gal-item').forEach(function(item) {
-        if (filter === 'all' || item.dataset.category === filter) {
-          item.style.opacity = '1';
-          item.style.transform = 'scale(1)';
-          item.style.pointerEvents = 'auto';
-        } else {
-          item.style.opacity = '0.15';
-          item.style.transform = 'scale(0.97)';
-          item.style.pointerEvents = 'none';
-        }
-      });
-    });
-  });
-</script>
 </body>
 </html>
